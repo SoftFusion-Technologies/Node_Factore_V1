@@ -1,0 +1,34 @@
+/* Benjamin Orellana - 05/10/2026 - Orquestador de rutas de Factor E. */
+import express from 'express';
+import healthRoutes from './health.routes.js';
+import clientesRoutes from './clientes.routes.js';
+import clientesNotasRoutes from './clientesNotas.routes.js';
+import comerciosAmigosRoutes from './comerciosAmigos.routes.js';
+import comercioClientesRoutes from './comercioClientes.routes.js';
+import cursosRoutes from './cursos.routes.js';
+import cursoModulosRoutes from './cursoModulos.routes.js';
+import cursoLeccionesRoutes from './cursoLecciones.routes.js';
+import cursoMaterialesRoutes from './cursoMateriales.routes.js';
+import usuariosRoutes from './usuarios.routes.js';
+import authRoutes from './auth.routes.js';
+import archivosRoutes from './archivos.routes.js';
+import accesosRoutes from './accesos.routes.js';
+import campusRoutes from './campus.routes.js';
+
+const router = express.Router({ caseSensitive: true, strict: true });
+router.use(healthRoutes);
+router.use(clientesRoutes);
+router.use(clientesNotasRoutes);
+router.use(comerciosAmigosRoutes);
+router.use(comercioClientesRoutes);
+router.use(cursosRoutes);
+router.use(cursoModulosRoutes);
+router.use(cursoLeccionesRoutes);
+router.use(cursoMaterialesRoutes);
+router.use(usuariosRoutes);
+router.use(authRoutes);
+router.use(archivosRoutes);
+router.use(accesosRoutes);
+router.use(campusRoutes);
+
+export default router;

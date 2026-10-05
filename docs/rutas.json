@@ -1,0 +1,746 @@
+[
+  {
+    "modulo": "clientes",
+    "method": "GET",
+    "path": "/api/admin/clientes",
+    "controller": "Cliente/CTS_TB_Clientes.js",
+    "handler": "OBRS_Clientes_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "clientes",
+    "method": "GET",
+    "path": "/api/admin/clientes/:id",
+    "controller": "Cliente/CTS_TB_Clientes.js",
+    "handler": "OBRS_DetCliente_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "clientes",
+    "method": "POST",
+    "path": "/api/admin/clientes",
+    "controller": "Cliente/CTS_TB_Clientes.js",
+    "handler": "CR_Cliente_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "clientes",
+    "method": "PATCH",
+    "path": "/api/admin/clientes/:id",
+    "controller": "Cliente/CTS_TB_Clientes.js",
+    "handler": "UR_Cliente_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "clientes",
+    "method": "DELETE",
+    "path": "/api/admin/clientes/:id",
+    "controller": "Cliente/CTS_TB_Clientes.js",
+    "handler": "ER_Cliente_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "clientesNotas",
+    "method": "GET",
+    "path": "/api/admin/clientes/:cliente_id/notas",
+    "controller": "Cliente/CTS_TB_ClientesNotas.js",
+    "handler": "OBRS_ClientesNotas_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "clientesNotas",
+    "method": "GET",
+    "path": "/api/admin/clientes/:cliente_id/notas/:id",
+    "controller": "Cliente/CTS_TB_ClientesNotas.js",
+    "handler": "OBRS_DetClienteNota_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "clientesNotas",
+    "method": "POST",
+    "path": "/api/admin/clientes/:cliente_id/notas",
+    "controller": "Cliente/CTS_TB_ClientesNotas.js",
+    "handler": "CR_ClienteNota_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "clientesNotas",
+    "method": "PATCH",
+    "path": "/api/admin/clientes/:cliente_id/notas/:id",
+    "controller": "Cliente/CTS_TB_ClientesNotas.js",
+    "handler": "UR_ClienteNota_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "clientesNotas",
+    "method": "DELETE",
+    "path": "/api/admin/clientes/:cliente_id/notas/:id",
+    "controller": "Cliente/CTS_TB_ClientesNotas.js",
+    "handler": "ER_ClienteNota_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "comerciosAmigos",
+    "method": "GET",
+    "path": "/api/admin/comercios",
+    "controller": "Comercio/CTS_TB_ComerciosAmigos.js",
+    "handler": "OBRS_ComerciosAmigos_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "comerciosAmigos",
+    "method": "GET",
+    "path": "/api/admin/comercios/:id",
+    "controller": "Comercio/CTS_TB_ComerciosAmigos.js",
+    "handler": "OBRS_DetComercioAmigo_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "comerciosAmigos",
+    "method": "POST",
+    "path": "/api/admin/comercios",
+    "controller": "Comercio/CTS_TB_ComerciosAmigos.js",
+    "handler": "CR_ComercioAmigo_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "comerciosAmigos",
+    "method": "PATCH",
+    "path": "/api/admin/comercios/:id",
+    "controller": "Comercio/CTS_TB_ComerciosAmigos.js",
+    "handler": "UR_ComercioAmigo_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "comerciosAmigos",
+    "method": "DELETE",
+    "path": "/api/admin/comercios/:id",
+    "controller": "Comercio/CTS_TB_ComerciosAmigos.js",
+    "handler": "ER_ComercioAmigo_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "comercioClientes",
+    "method": "GET",
+    "path": "/api/admin/comercios/:comercio_id/clientes",
+    "controller": "Comercio/CTS_TB_ComercioClientes.js",
+    "handler": "OBRS_ClientesComercio_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "comercioClientes",
+    "method": "GET",
+    "path": "/api/admin/clientes/:cliente_id/comercios",
+    "controller": "Comercio/CTS_TB_ComercioClientes.js",
+    "handler": "OBRS_ComerciosCliente_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "comercioClientes",
+    "method": "POST",
+    "path": "/api/admin/comercios/:comercio_id/clientes",
+    "controller": "Comercio/CTS_TB_ComercioClientes.js",
+    "handler": "CR_ComercioCliente_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "comercioClientes",
+    "method": "PATCH",
+    "path": "/api/admin/comercios/:comercio_id/clientes/:id",
+    "controller": "Comercio/CTS_TB_ComercioClientes.js",
+    "handler": "UR_ComercioCliente_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "comercioClientes",
+    "method": "DELETE",
+    "path": "/api/admin/comercios/:comercio_id/clientes/:id",
+    "controller": "Comercio/CTS_TB_ComercioClientes.js",
+    "handler": "ER_ComercioCliente_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "cursos",
+    "method": "GET",
+    "path": "/api/admin/cursos",
+    "controller": "Curso/CTS_TB_Cursos.js",
+    "handler": "OBRS_Cursos_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "cursos",
+    "method": "GET",
+    "path": "/api/admin/cursos/:id",
+    "controller": "Curso/CTS_TB_Cursos.js",
+    "handler": "OBRS_DetCurso_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "cursos",
+    "method": "POST",
+    "path": "/api/admin/cursos",
+    "controller": "Curso/CTS_TB_Cursos.js",
+    "handler": "CR_Curso_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "cursos",
+    "method": "PATCH",
+    "path": "/api/admin/cursos/:id",
+    "controller": "Curso/CTS_TB_Cursos.js",
+    "handler": "UR_Curso_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "cursos",
+    "method": "DELETE",
+    "path": "/api/admin/cursos/:id",
+    "controller": "Curso/CTS_TB_Cursos.js",
+    "handler": "ER_Curso_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "cursoModulos",
+    "method": "GET",
+    "path": "/api/admin/cursos/:curso_id/modulos",
+    "controller": "Curso/CTS_TB_CursoModulos.js",
+    "handler": "OBRS_CursoModulos_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "cursoModulos",
+    "method": "GET",
+    "path": "/api/admin/cursos/:curso_id/modulos/:id",
+    "controller": "Curso/CTS_TB_CursoModulos.js",
+    "handler": "OBRS_DetCursoModulo_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "cursoModulos",
+    "method": "POST",
+    "path": "/api/admin/cursos/:curso_id/modulos",
+    "controller": "Curso/CTS_TB_CursoModulos.js",
+    "handler": "CR_CursoModulo_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "cursoModulos",
+    "method": "PATCH",
+    "path": "/api/admin/cursos/:curso_id/modulos/:id",
+    "controller": "Curso/CTS_TB_CursoModulos.js",
+    "handler": "UR_CursoModulo_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "cursoModulos",
+    "method": "DELETE",
+    "path": "/api/admin/cursos/:curso_id/modulos/:id",
+    "controller": "Curso/CTS_TB_CursoModulos.js",
+    "handler": "ER_CursoModulo_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "cursoLecciones",
+    "method": "GET",
+    "path": "/api/admin/cursos/:curso_id/lecciones",
+    "controller": "Curso/CTS_TB_CursoLecciones.js",
+    "handler": "OBRS_CursoLecciones_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "cursoLecciones",
+    "method": "GET",
+    "path": "/api/admin/cursos/:curso_id/lecciones/:id",
+    "controller": "Curso/CTS_TB_CursoLecciones.js",
+    "handler": "OBRS_DetCursoLeccion_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "cursoLecciones",
+    "method": "POST",
+    "path": "/api/admin/cursos/:curso_id/lecciones",
+    "controller": "Curso/CTS_TB_CursoLecciones.js",
+    "handler": "CR_CursoLeccion_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "cursoLecciones",
+    "method": "PATCH",
+    "path": "/api/admin/cursos/:curso_id/lecciones/:id",
+    "controller": "Curso/CTS_TB_CursoLecciones.js",
+    "handler": "UR_CursoLeccion_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "cursoLecciones",
+    "method": "DELETE",
+    "path": "/api/admin/cursos/:curso_id/lecciones/:id",
+    "controller": "Curso/CTS_TB_CursoLecciones.js",
+    "handler": "ER_CursoLeccion_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "cursoMateriales",
+    "method": "GET",
+    "path": "/api/admin/cursos/:curso_id/materiales",
+    "controller": "Curso/CTS_TB_CursoMateriales.js",
+    "handler": "OBRS_CursoMateriales_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "cursoMateriales",
+    "method": "GET",
+    "path": "/api/admin/cursos/:curso_id/materiales/:id",
+    "controller": "Curso/CTS_TB_CursoMateriales.js",
+    "handler": "OBRS_DetCursoMaterial_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "cursoMateriales",
+    "method": "POST",
+    "path": "/api/admin/cursos/:curso_id/materiales",
+    "controller": "Curso/CTS_TB_CursoMateriales.js",
+    "handler": "CR_CursoMaterial_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "cursoMateriales",
+    "method": "PATCH",
+    "path": "/api/admin/cursos/:curso_id/materiales/:id",
+    "controller": "Curso/CTS_TB_CursoMateriales.js",
+    "handler": "UR_CursoMaterial_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "cursoMateriales",
+    "method": "DELETE",
+    "path": "/api/admin/cursos/:curso_id/materiales/:id",
+    "controller": "Curso/CTS_TB_CursoMateriales.js",
+    "handler": "ER_CursoMaterial_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "cursoLecciones",
+    "method": "DELETE",
+    "path": "/api/admin/cursos/:curso_id/lecciones/:id/video",
+    "controller": "Curso/CTS_TB_CursoLecciones.js",
+    "handler": "ER_VideoLeccion_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "usuarios",
+    "method": "GET",
+    "path": "/api/admin/usuarios",
+    "controller": "Usuario/CTS_TB_Usuarios.js",
+    "handler": "OBRS_Usuarios_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "usuarios",
+    "method": "GET",
+    "path": "/api/admin/usuarios/:id",
+    "controller": "Usuario/CTS_TB_Usuarios.js",
+    "handler": "OBRS_DetUsuario_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "usuarios",
+    "method": "POST",
+    "path": "/api/admin/usuarios",
+    "controller": "Usuario/CTS_TB_Usuarios.js",
+    "handler": "CR_Usuario_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "usuarios",
+    "method": "PATCH",
+    "path": "/api/admin/usuarios/:id",
+    "controller": "Usuario/CTS_TB_Usuarios.js",
+    "handler": "UR_Usuario_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "usuarios",
+    "method": "DELETE",
+    "path": "/api/admin/usuarios/:id",
+    "controller": "Usuario/CTS_TB_Usuarios.js",
+    "handler": "ER_Usuario_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "usuarios",
+    "method": "POST",
+    "path": "/api/admin/usuarios/:id/activacion",
+    "controller": "Usuario/CTS_TB_Usuarios.js",
+    "handler": "CR_ActivacionUsuario_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "usuarios",
+    "method": "POST",
+    "path": "/api/admin/usuarios/:id/recuperacion",
+    "controller": "Usuario/CTS_TB_Usuarios.js",
+    "handler": "CR_RecuperacionUsuario_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "usuarios",
+    "method": "DELETE",
+    "path": "/api/admin/usuarios/:id/sesiones",
+    "controller": "Usuario/CTS_TB_Usuarios.js",
+    "handler": "ER_SesionesUsuario_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "auth",
+    "method": "POST",
+    "path": "/api/auth/login",
+    "controller": "Usuario/CTS_Auth.js",
+    "handler": "LOGIN_CTS",
+    "perfil": "auth"
+  },
+  {
+    "modulo": "auth",
+    "method": "GET",
+    "path": "/api/auth/me",
+    "controller": "Usuario/CTS_Auth.js",
+    "handler": "OBRS_MiPerfil_CTS",
+    "perfil": "auth"
+  },
+  {
+    "modulo": "auth",
+    "method": "POST",
+    "path": "/api/auth/logout",
+    "controller": "Usuario/CTS_Auth.js",
+    "handler": "LOGOUT_CTS",
+    "perfil": "auth"
+  },
+  {
+    "modulo": "auth",
+    "method": "PATCH",
+    "path": "/api/auth/password",
+    "controller": "Usuario/CTS_Auth.js",
+    "handler": "UR_MiPassword_CTS",
+    "perfil": "auth"
+  },
+  {
+    "modulo": "auth",
+    "method": "POST",
+    "path": "/api/auth/activar",
+    "controller": "Usuario/CTS_Auth.js",
+    "handler": "ACTIVAR_Cuenta_CTS",
+    "perfil": "auth"
+  },
+  {
+    "modulo": "auth",
+    "method": "POST",
+    "path": "/api/auth/recuperar",
+    "controller": "Usuario/CTS_Auth.js",
+    "handler": "RECUPERAR_Cuenta_CTS",
+    "perfil": "auth"
+  },
+  {
+    "modulo": "archivos",
+    "method": "GET",
+    "path": "/api/admin/archivos",
+    "controller": "Archivo/CTS_TB_Archivos.js",
+    "handler": "OBRS_Archivos_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "archivos",
+    "method": "GET",
+    "path": "/api/admin/archivos/:id",
+    "controller": "Archivo/CTS_TB_Archivos.js",
+    "handler": "OBRS_DetArchivo_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "archivos",
+    "method": "GET",
+    "path": "/api/admin/archivos/:id/referencias",
+    "controller": "Archivo/CTS_TB_Archivos.js",
+    "handler": "OBRS_ReferenciasArchivo_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "archivos",
+    "method": "POST",
+    "path": "/api/admin/archivos/subir/:tipo",
+    "controller": "Archivo/CTS_TB_Archivos.js",
+    "handler": "CR_Archivo_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "archivos",
+    "method": "PATCH",
+    "path": "/api/admin/archivos/:id/duracion",
+    "controller": "Archivo/CTS_TB_Archivos.js",
+    "handler": "UR_DuracionArchivo_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "archivos",
+    "method": "DELETE",
+    "path": "/api/admin/archivos/:id",
+    "controller": "Archivo/CTS_TB_Archivos.js",
+    "handler": "ER_Archivo_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "archivos",
+    "method": "HEAD",
+    "path": "/api/admin/archivos/:id/contenido",
+    "controller": "Archivo/CTS_TB_Archivos.js",
+    "handler": "OBRS_ContenidoArchivo_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "archivos",
+    "method": "GET",
+    "path": "/api/admin/archivos/:id/contenido",
+    "controller": "Archivo/CTS_TB_Archivos.js",
+    "handler": "OBRS_ContenidoArchivo_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "accesos",
+    "method": "GET",
+    "path": "/api/admin/accesos",
+    "controller": "Acceso/CTS_TB_CursoAccesos.js",
+    "handler": "OBRS_CursoAccesos_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "accesos",
+    "method": "GET",
+    "path": "/api/admin/accesos/:id",
+    "controller": "Acceso/CTS_TB_CursoAccesos.js",
+    "handler": "OBRS_DetCursoAcceso_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "accesos",
+    "method": "POST",
+    "path": "/api/admin/accesos",
+    "controller": "Acceso/CTS_TB_CursoAccesos.js",
+    "handler": "CR_CursoAcceso_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "accesos",
+    "method": "PATCH",
+    "path": "/api/admin/accesos/:id",
+    "controller": "Acceso/CTS_TB_CursoAccesos.js",
+    "handler": "UR_CursoAcceso_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "accesos",
+    "method": "POST",
+    "path": "/api/admin/accesos/:id/renovar",
+    "controller": "Acceso/CTS_TB_CursoAccesos.js",
+    "handler": "RENOVAR_CursoAcceso_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "accesos",
+    "method": "POST",
+    "path": "/api/admin/accesos/:id/suspender",
+    "controller": "Acceso/CTS_TB_CursoAccesos.js",
+    "handler": "SUSPENDER_CursoAcceso_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "accesos",
+    "method": "POST",
+    "path": "/api/admin/accesos/:id/reactivar",
+    "controller": "Acceso/CTS_TB_CursoAccesos.js",
+    "handler": "REACTIVAR_CursoAcceso_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "accesos",
+    "method": "DELETE",
+    "path": "/api/admin/accesos/:id",
+    "controller": "Acceso/CTS_TB_CursoAccesos.js",
+    "handler": "ER_CursoAcceso_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "accesos",
+    "method": "GET",
+    "path": "/api/admin/accesos/:acceso_id/lecciones",
+    "controller": "Acceso/CTS_TB_CursoAccesoLecciones.js",
+    "handler": "OBRS_CursoAccesoLecciones_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "accesos",
+    "method": "PATCH",
+    "path": "/api/admin/accesos/:acceso_id/lecciones/:leccion_id",
+    "controller": "Acceso/CTS_TB_CursoAccesoLecciones.js",
+    "handler": "UR_CursoAccesoLeccion_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "accesos",
+    "method": "DELETE",
+    "path": "/api/admin/accesos/:acceso_id/lecciones/:leccion_id",
+    "controller": "Acceso/CTS_TB_CursoAccesoLecciones.js",
+    "handler": "ER_CursoAccesoLeccion_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "accesos",
+    "method": "GET",
+    "path": "/api/admin/accesos/:acceso_id/historial",
+    "controller": "Acceso/CTS_TB_CursoAccesosHistorial.js",
+    "handler": "OBRS_CursoAccesosHistorial_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "campus",
+    "method": "GET",
+    "path": "/api/campus/cursos",
+    "controller": "Campus/CTS_CampusCursos.js",
+    "handler": "OBRS_MisCursos_CTS",
+    "perfil": "alumno"
+  },
+  {
+    "modulo": "campus",
+    "method": "GET",
+    "path": "/api/campus/cursos/:curso_id",
+    "controller": "Campus/CTS_CampusCursos.js",
+    "handler": "OBRS_DetMiCurso_CTS",
+    "perfil": "alumno"
+  },
+  {
+    "modulo": "campus",
+    "method": "GET",
+    "path": "/api/campus/cursos/:curso_id/lecciones/:leccion_id",
+    "controller": "Campus/CTS_CampusCursos.js",
+    "handler": "OBRS_MiLeccion_CTS",
+    "perfil": "alumno"
+  },
+  {
+    "modulo": "campus",
+    "method": "GET",
+    "path": "/api/campus/cursos/:curso_id/materiales",
+    "controller": "Campus/CTS_CampusMateriales.js",
+    "handler": "OBRS_MisMateriales_CTS",
+    "perfil": "alumno"
+  },
+  {
+    "modulo": "campus",
+    "method": "GET",
+    "path": "/api/campus/cursos/:curso_id/progreso",
+    "controller": "Campus/CTS_CampusProgreso.js",
+    "handler": "OBRS_MiProgresoCurso_CTS",
+    "perfil": "alumno"
+  },
+  {
+    "modulo": "campus",
+    "method": "PATCH",
+    "path": "/api/campus/cursos/:curso_id/lecciones/:leccion_id/progreso",
+    "controller": "Campus/CTS_CampusProgreso.js",
+    "handler": "UR_MiProgresoLeccion_CTS",
+    "perfil": "alumno"
+  },
+  {
+    "modulo": "campus",
+    "method": "GET",
+    "path": "/api/campus/comercios",
+    "controller": "Campus/CTS_CampusComercios.js",
+    "handler": "OBRS_ComerciosCampus_CTS",
+    "perfil": "alumno"
+  },
+  {
+    "modulo": "campus",
+    "method": "GET",
+    "path": "/api/campus/comercios/:comercio_id",
+    "controller": "Campus/CTS_CampusComercios.js",
+    "handler": "OBRS_DetComercioCampus_CTS",
+    "perfil": "alumno"
+  },
+  {
+    "modulo": "campus",
+    "method": "HEAD",
+    "path": "/api/campus/cursos/:curso_id/lecciones/:leccion_id/video",
+    "controller": "Campus/CTS_CampusArchivos.js",
+    "handler": "OBRS_VideoCampus_CTS",
+    "perfil": "alumno"
+  },
+  {
+    "modulo": "campus",
+    "method": "GET",
+    "path": "/api/campus/cursos/:curso_id/lecciones/:leccion_id/video",
+    "controller": "Campus/CTS_CampusArchivos.js",
+    "handler": "OBRS_VideoCampus_CTS",
+    "perfil": "alumno"
+  },
+  {
+    "modulo": "campus",
+    "method": "HEAD",
+    "path": "/api/campus/cursos/:curso_id/portada",
+    "controller": "Campus/CTS_CampusArchivos.js",
+    "handler": "OBRS_PortadaCursoCampus_CTS",
+    "perfil": "alumno"
+  },
+  {
+    "modulo": "campus",
+    "method": "GET",
+    "path": "/api/campus/cursos/:curso_id/portada",
+    "controller": "Campus/CTS_CampusArchivos.js",
+    "handler": "OBRS_PortadaCursoCampus_CTS",
+    "perfil": "alumno"
+  },
+  {
+    "modulo": "campus",
+    "method": "HEAD",
+    "path": "/api/campus/cursos/:curso_id/lecciones/:leccion_id/portada",
+    "controller": "Campus/CTS_CampusArchivos.js",
+    "handler": "OBRS_PortadaLeccionCampus_CTS",
+    "perfil": "alumno"
+  },
+  {
+    "modulo": "campus",
+    "method": "GET",
+    "path": "/api/campus/cursos/:curso_id/lecciones/:leccion_id/portada",
+    "controller": "Campus/CTS_CampusArchivos.js",
+    "handler": "OBRS_PortadaLeccionCampus_CTS",
+    "perfil": "alumno"
+  },
+  {
+    "modulo": "campus",
+    "method": "HEAD",
+    "path": "/api/campus/cursos/:curso_id/materiales/:material_id/contenido",
+    "controller": "Campus/CTS_CampusArchivos.js",
+    "handler": "OBRS_MaterialCampus_CTS",
+    "perfil": "alumno"
+  },
+  {
+    "modulo": "campus",
+    "method": "GET",
+    "path": "/api/campus/cursos/:curso_id/materiales/:material_id/contenido",
+    "controller": "Campus/CTS_CampusArchivos.js",
+    "handler": "OBRS_MaterialCampus_CTS",
+    "perfil": "alumno"
+  },
+  {
+    "modulo": "campus",
+    "method": "HEAD",
+    "path": "/api/campus/comercios/:comercio_id/logo",
+    "controller": "Campus/CTS_CampusArchivos.js",
+    "handler": "OBRS_LogoComercioCampus_CTS",
+    "perfil": "alumno"
+  },
+  {
+    "modulo": "campus",
+    "method": "GET",
+    "path": "/api/campus/comercios/:comercio_id/logo",
+    "controller": "Campus/CTS_CampusArchivos.js",
+    "handler": "OBRS_LogoComercioCampus_CTS",
+    "perfil": "alumno"
+  }
+]
