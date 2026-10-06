@@ -12,6 +12,8 @@ import ArchivosModel from '../../Models/Archivo/MD_TB_Archivos.js';
 import { controlador } from '../../utils/http.utils.js';
 import { id, texto, email, url, bandera, entero, slug, slugDesdeNombre, camposPermitidos, exigir } from '../../utils/validacion.utils.js';
 import { consulta, busqueda, listar } from '../../utils/listados.utils.js';
+import { conContenido } from '../../Services/Curso/contenido.service.js';
+import { bloquearArchivos, validarArchivo, encolarSinReferencias } from '../../Services/Archivo/archivoReferencias.service.js';
 import { conAuditoria } from '../../Services/Sistema/auditoria.service.js';
 
 const campos = ['nombre','slug','rubro','descripcion','ciudad','direccion_publica','telefono_publico','email_publico',
@@ -75,3 +77,22 @@ async function actualizar(req, actor, desactivar) {
 }
 export const UR_ComercioAmigo_CTS = controlador((req, actor) => actualizar(req, actor, false));
 export const ER_ComercioAmigo_CTS = controlador((req, actor) => actualizar(req, actor, true));
+
+// El logo se gestiona por una operación específica, separada de la ficha comercial.
+export const UR_LogoComercioAmigo_CTS = controlador(async (req, actor) => {
+  const comercioId = id(req.params?.id), input = camposPermitidos(req.body, ['logo_archivo_id']);
+  exigir(Object.hasOwn(input, 'logo_archivo_id'), 422, 'DATOS_INVALIDOS', 'Indicar el logo o null para retirarlo.');
+  const logoId = input.logo_archivo_id === null ? null : id(input.logo_archivo_id, 'logo_archivo_id');
+  return conContenido(req, actor, 'COMERCIO_LOGO_ACTUALIZADO', 'comercios_amigos', async transaction => {
+    const row = await ComerciosAmigosModel.findByPk(comercioId, { transaction, lock:transaction.LOCK.UPDATE });
+    exigir(row, 404, 'NO_ENCONTRADO', 'Comercio no encontrado.');
+    const anterior = row.logo_archivo_id;
+    const files = await bloquearArchivos([anterior, logoId], transaction);
+    await validarArchivo(logoId, 'IMAGEN', files);
+    await row.update({ logo_archivo_id:logoId }, { transaction });
+    const trabajos = String(anterior) !== String(logoId)
+      ? await encolarSinReferencias([anterior], actor.id, transaction, files) : [];
+    await row.reload({ transaction });
+    return { entidadId:row.id, data:row, trabajos, detalle:{ campos:['logo_archivo_id'] } };
+  }, 200, logoId === null ? 'Logo retirado correctamente.' : 'Logo actualizado correctamente.');
+});

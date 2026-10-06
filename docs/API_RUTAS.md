@@ -245,3 +245,11 @@ await fetch(`${api}/api/campus/cursos/${cursoId}/lecciones/${leccionId}/progreso
 Para `<video>` o imágenes entre orígenes autorizados usar `crossOrigin="use-credentials"` y la URL de la asociación del campus. El material usa `/api/campus/cursos/:curso_id/materiales/:material_id/contenido`; el administrador usa `/api/admin/archivos/:id/contenido`. No mandar token ni usuario en query, ni usar una carpeta pública de uploads.
 
 Errores habituales: 401 sesión inválida; 403 CSRF/origen/rol/cambio obligatorio; 404 recurso no disponible en ese curso/usuario; 409 conflicto de estado/relación; 422 validación. Un recurso ajeno del campus devuelve 404. Las rutas GET de JSON admiten HEAD implícito; el contenido físico tiene HEAD explícito. OPTIONS lo responde CORS sin autenticar y sin consultar MySQL.
+
+## Logo de comercio (05/10/2026)
+
+PATCH /api/admin/comercios/:id/logo · ADMIN con cookie y CSRF. Cuerpo exclusivo: logo_archivo_id como cadena BIGINT o null para retirar. Exige imagen disponible en disco, audita la transacción y elimina el archivo anterior si no tiene referencias. Una eliminación pendiente responde 202 y devuelve eliminaciones. Detalle en COMERCIOS_LOGOS.md.
+
+## Seguimiento administrativo
+
+GET `/api/admin/seguimiento` devuelve `{ data, meta, resumen, consultado_en }`. GET `/api/admin/seguimiento/:id` devuelve `{ data, lecciones, meta, consultado_en }`. Exclusivo de ADMIN; consultas de lectura y sin cambios de permisos/progreso. El ID del detalle es el de la asignación. Filtros y criterios completos en `docs/SEGUIMIENTO.md`.

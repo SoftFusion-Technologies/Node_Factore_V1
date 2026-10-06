@@ -46,12 +46,12 @@ try {
       if (typeof handler === 'function') { functions++; assert.ok(seen.has(handler), `${file}: ${name} no tiene ruta.`); }
     }
   }
-  assert.equal(functions, 87);
+  assert.equal(functions, 90);
   const app = crearApp();
   assert.equal(app.get('trust proxy'), process.env.TRUST_PROXY === 'loopback' ? 'loopback' : false);
   assert.equal(app.get('query parser'), 'simple');
   assert.equal(app.enabled('x-powered-by'), false);
-  console.log('Rutas y servidor OK: ' + JSON.stringify({ modulos: 14, rutas: actual.length, controladores: files.size, funciones: functions }));
+  console.log('Rutas y servidor OK: ' + JSON.stringify({ modulos: 15, rutas: actual.length, controladores: files.size, funciones: functions }));
   console.log('Verificación local terminada. No se abrió una conexión a MySQL.');
 } catch (error) { console.error(error.message); process.exitCode = 1; }
 finally { await db.close(); }

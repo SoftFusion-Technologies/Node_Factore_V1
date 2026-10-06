@@ -17,7 +17,7 @@ try {
       funciones++;
     }
   }
-  assert.equal(funciones, 20);
+  assert.equal(funciones, 21);
   console.log('Controladores CRM OK:', JSON.stringify({ archivos:4, funciones, modelos:18 }));
   console.log('Verificación local terminada. No se abrió una conexión a MySQL.');
 } catch (error) {

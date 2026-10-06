@@ -80,9 +80,9 @@ test('Rutas: aplicación Express completa, cookies, módulos, multipart y campus
     await json('/api/status', { jar: null, headers: { origin: 'https://ajeno.example.invalid' } }, 403);
     await json('/api/status', { jar: null, method: 'OPTIONS', headers: { origin: 'http://localhost:5173', 'access-control-request-headers': 'Authorization' } }, 403);
   });
-  await t.test('Todas las 89 rutas protegidas rechazan IDs libres sin cookie válida', async () => {
+  await t.test('Todas las 92 rutas protegidas rechazan IDs libres sin cookie válida', async () => {
     const protectedRoutes = contract.filter(x => x.perfil !== 'auth' || ['OBRS_MiPerfil_CTS', 'UR_MiPassword_CTS'].includes(x.handler));
-    assert.equal(protectedRoutes.length, 89);
+    assert.equal(protectedRoutes.length, 92);
     for (const route of protectedRoutes) {
       const res = await send(route.path.replace(/:[^/]+/g, '1'), { jar: null, method: route.method,
         ...(!['GET', 'HEAD'].includes(route.method) ? { body: {} } : {}), headers: { 'x-user-id': String(admin.id), authorization: 'Bearer ID-LIBRE' } });
@@ -175,8 +175,8 @@ test('Rutas: aplicación Express completa, cookies, módulos, multipart y campus
     await json(cp, { jar: studentJar });
   });
   await t.test('Las seis rutas de archivos responden GET/HEAD y rangos; revocar impide reproducir', async () => {
-    // El logo se carga como fixture: la asociación administrativa no es parte de los controladores de comercios instalados.
-    await modelos.comercios_amigos.update({ logo_archivo_id: course.portada_archivo_id }, { where: { id: friend.id } });
+    // Asociación administrativa real, con transacción, auditoría y referencias.
+    await json(api + `/comercios/${friend.id}/logo`, { method:'PATCH', body:{ logo_archivo_id:course.portada_archivo_id } });
     const paths = [api + `/archivos/${file.id}/contenido`, campus + `/cursos/${course.id}/lecciones/${lesson.id}/video`,
       campus + `/cursos/${course.id}/portada`, campus + `/cursos/${course.id}/lecciones/${lesson.id}/portada`,
       campus + `/cursos/${course.id}/materiales/${material.id}/contenido`, campus + `/comercios/${friend.id}/logo`];
@@ -200,6 +200,28 @@ test('Rutas: aplicación Express completa, cookies, módulos, multipart y campus
     const activation = (await json(api + `/usuarios/${u.id}/activacion`, { method: 'POST', body: {} }, 201)).data;
     await json('/api/auth/activar', { jar: null, method: 'POST', body: { token: activation.token, password } });
     const jar = await login(u);
+    // El mismo alumno creado y activado recorre asignación, campus, seguimiento,
+    // suspensión y renovación por HTTP; todo ocurre en el fixture aislado.
+    const granted = (await json(api + '/accesos', { method: 'POST', body: { usuario_id: u.id, curso_id: course.id } }, 201)).data;
+    const cp = campus + `/cursos/${course.id}`, lp = cp + `/lecciones/${lesson.id}`;
+    await json(lp, { jar });
+    const video = await send(lp + '/video', { jar, headers: { range: 'bytes=0-3' } });
+    assert.equal(video.status, 206); assert.equal((await video.arrayBuffer()).byteLength, 4);
+    await json(lp + '/progreso', { jar, method: 'PATCH', body: { posicion_segundos: 8, completada: true } });
+    const followed = async () => (await json(api + '/seguimiento?usuario_id=' + u.id)).data[0];
+    assert.equal(Number((await followed()).porcentaje), 100);
+    await json(api + `/accesos/${granted.id}/suspender`, { method: 'POST', body: {} });
+    await json(lp + '/video', { jar }, 404);
+    const suspended = await followed();
+    assert.equal(suspended.porcentaje, null); assert.equal(Number(suspended.lecciones_completadas_historial), 1);
+    await json(api + `/accesos/${granted.id}/reactivar`, { method: 'POST', body: {} });
+    await json(api + `/accesos/${granted.id}`, { method: 'DELETE', body: {} });
+    await json(cp, { jar }, 404);
+    await json(api + `/accesos/${granted.id}/renovar`, { method: 'POST', body: { vence_en: null } });
+    assert.equal(Number((await followed()).porcentaje), 100);
+    const persistent = await modelos.leccion_progreso.findOne({ where: { usuario_id: u.id, leccion_id: lesson.id } });
+    assert.equal(persistent.estado, 'COMPLETADA'); assert.equal(persistent.posicion_segundos, 8);
+    assert.equal(await modelos.auditoria_eventos.count({ where: { usuario_id: u.id, entidad: 'leccion_progreso', entidad_id: persistent.id, accion: 'LECCION_COMPLETADA' } }), 1);
     const recovery = (await json(api + `/usuarios/${u.id}/recuperacion`, { method: 'POST', body: {} }, 201)).data;
     await json('/api/auth/me', { jar }, 401);
     const nueva = 'Nueva clave recuperada para rutas Factor E 2026';

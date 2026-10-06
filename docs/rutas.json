@@ -742,5 +742,29 @@
     "controller": "Campus/CTS_CampusArchivos.js",
     "handler": "OBRS_LogoComercioCampus_CTS",
     "perfil": "alumno"
+  },
+  {
+    "modulo": "comerciosAmigos",
+    "method": "PATCH",
+    "path": "/api/admin/comercios/:id/logo",
+    "perfil": "admin",
+    "controller": "Comercio/CTS_TB_ComerciosAmigos.js",
+    "handler": "UR_LogoComercioAmigo_CTS"
+  },
+  {
+    "modulo": "seguimiento",
+    "method": "GET",
+    "path": "/api/admin/seguimiento",
+    "controller": "Seguimiento/CTS_Seguimiento.js",
+    "handler": "OBRS_Seguimiento_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "seguimiento",
+    "method": "GET",
+    "path": "/api/admin/seguimiento/:id",
+    "controller": "Seguimiento/CTS_Seguimiento.js",
+    "handler": "OBRS_DetSeguimiento_CTS",
+    "perfil": "admin"
   }
 ]

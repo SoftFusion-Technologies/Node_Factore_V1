@@ -13,6 +13,7 @@ import usuariosRoutes from './usuarios.routes.js';
 import authRoutes from './auth.routes.js';
 import archivosRoutes from './archivos.routes.js';
 import accesosRoutes from './accesos.routes.js';
+import seguimientoRoutes from './seguimiento.routes.js';
 import campusRoutes from './campus.routes.js';
 
 const router = express.Router({ caseSensitive: true, strict: true });
@@ -30,5 +31,6 @@ router.use(authRoutes);
 router.use(archivosRoutes);
 router.use(accesosRoutes);
 router.use(campusRoutes);
+router.use(seguimientoRoutes);
 
 export default router;
