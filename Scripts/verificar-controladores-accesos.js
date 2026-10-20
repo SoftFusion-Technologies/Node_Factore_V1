@@ -12,7 +12,7 @@ try {
   for (const [module, names] of modules) {
     assert.deepEqual(Object.keys(module).sort(), names.sort()); for (const name of names) assert.equal(typeof module[name], 'function');
   }
-  assert.equal(Object.keys(modelos).length, 18);
-  console.log('Controladores accesos OK: ' + JSON.stringify({ archivos: 3, funciones: 12, modelos: 18 }));
+  assert.equal(Object.keys(modelos).length, 21);
+  console.log('Controladores accesos OK: ' + JSON.stringify({ archivos: 3, funciones: 12, modelos: 21 }));
   console.log('Verificación local terminada. No se abrió una conexión a MySQL.');
 } catch (error) { console.error(error.message); process.exitCode = 1; } finally { await db.close(); }

@@ -1,3 +1,6 @@
+import CompraPagosModel from './Compra/MD_TB_CompraPagos.js';
+import ComprasModel from './Compra/MD_TB_Compras.js';
+import CompraItemsModel from './Compra/MD_TB_CompraItems.js';
 /* Factor E: registro de modelos. Las relaciones se inicializan desde relaciones.js. */
 
 import ClientesModel from './Cliente/MD_TB_Clientes.js';
@@ -20,6 +23,7 @@ import AuditoriaEventosModel from './Sistema/MD_TB_AuditoriaEventos.js';
 import ArchivosEliminacionesModel from './Archivo/MD_TB_ArchivosEliminaciones.js';
 
 export {
+  ComprasModel, CompraItemsModel, CompraPagosModel,
   ClientesModel,
   UsuariosModel,
   ArchivosModel,
@@ -41,6 +45,7 @@ export {
 };
 
 export const modelos = {
+  compras: ComprasModel, compra_items: CompraItemsModel, compra_pagos: CompraPagosModel,
   crm_clientes: ClientesModel,
   usuarios: UsuariosModel,
   archivos: ArchivosModel,

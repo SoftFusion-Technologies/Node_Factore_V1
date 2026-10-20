@@ -83,6 +83,10 @@ const CursosModel = db.define(
       defaultValue: 0
     },
 
+    venta_online_habilitada: { type: DataTypes.TINYINT.UNSIGNED, allowNull: false, defaultValue: 0 },
+    acceso_duracion_cantidad: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false, defaultValue: 1 },
+    acceso_duracion_unidad: { type: DataTypes.ENUM('DIAS','MESES'), allowNull: false, defaultValue: 'MESES' },
+
     creado_por: {
       type: DataTypes.BIGINT.UNSIGNED,
       allowNull: false,

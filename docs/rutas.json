@@ -766,5 +766,140 @@
     "controller": "Seguimiento/CTS_Seguimiento.js",
     "handler": "OBRS_DetSeguimiento_CTS",
     "perfil": "admin"
+  },
+  {
+    "modulo": "catalogo",
+    "method": "GET",
+    "path": "/api/catalogo/cursos",
+    "controller": "Catalogo/CTS_CatalogoCursos.js",
+    "handler": "OBRS_CatalogoCursos_CTS",
+    "perfil": "catalogo"
+  },
+  {
+    "modulo": "catalogo",
+    "method": "GET",
+    "path": "/api/catalogo/cursos/:slug",
+    "controller": "Catalogo/CTS_CatalogoCursos.js",
+    "handler": "OBRS_CatalogoCurso_CTS",
+    "perfil": "catalogo"
+  },
+  {
+    "modulo": "checkout",
+    "method": "POST",
+    "path": "/api/checkout/compras",
+    "controller": "Compra/CTS_Compras.js",
+    "handler": "CR_Compra_CTS",
+    "perfil": "checkout"
+  },
+  {
+    "modulo": "checkout",
+    "method": "GET",
+    "path": "/api/checkout/compras/:referencia",
+    "controller": "Compra/CTS_Compras.js",
+    "handler": "OBRS_Compra_CTS",
+    "perfil": "checkout"
+  },
+  {
+    "modulo": "checkout",
+    "method": "POST",
+    "path": "/api/checkout/compras/:referencia/cancelar",
+    "controller": "Compra/CTS_Compras.js",
+    "handler": "ER_Compra_CTS",
+    "perfil": "checkout"
+  },
+  {
+    "modulo": "checkout",
+    "method": "POST",
+    "path": "/api/checkout/compras/:referencia/mercadopago",
+    "controller": "Compra/CTS_CheckoutMP.js",
+    "handler": "CR_CheckoutMP_CTS",
+    "perfil": "checkout"
+  },
+  {
+    "method": "POST",
+    "path": "/api/mercadopago/webhook",
+    "controller": "Compra/CTS_WebhookMP.js",
+    "handler": "CR_WebhookMP_CTS",
+    "perfil": "webhook"
+  },
+  {
+    "modulo": "checkout",
+    "method": "POST",
+    "path": "/api/checkout/navegador/compras/:referencia/sesion",
+    "controller": "Compra/CTS_Compras.js",
+    "handler": "PREPARAR_SesionCompra_CTS",
+    "perfil": "checkout_preparar"
+  },
+  {
+    "modulo": "checkout",
+    "method": "GET",
+    "path": "/api/checkout/navegador/compras/:referencia/sesion",
+    "controller": "Compra/CTS_Compras.js",
+    "handler": "OBRS_SesionCompra_CTS",
+    "perfil": "checkout_cookie"
+  },
+  {
+    "modulo": "checkout",
+    "method": "POST",
+    "path": "/api/checkout/navegador/compras/:referencia",
+    "controller": "Compra/CTS_Compras.js",
+    "handler": "CR_CompraNavegador_CTS",
+    "perfil": "checkout_cookie"
+  },
+  {
+    "modulo": "checkout",
+    "method": "GET",
+    "path": "/api/checkout/navegador/compras/:referencia",
+    "controller": "Compra/CTS_Compras.js",
+    "handler": "OBRS_Compra_CTS",
+    "perfil": "checkout_cookie"
+  },
+  {
+    "modulo": "checkout",
+    "method": "POST",
+    "path": "/api/checkout/navegador/compras/:referencia/cancelar",
+    "controller": "Compra/CTS_Compras.js",
+    "handler": "ER_Compra_CTS",
+    "perfil": "checkout_cookie"
+  },
+  {
+    "modulo": "checkout",
+    "method": "POST",
+    "path": "/api/checkout/navegador/compras/:referencia/mercadopago",
+    "controller": "Compra/CTS_CheckoutMP.js",
+    "handler": "CR_CheckoutMP_CTS",
+    "perfil": "checkout_cookie"
+  },
+  {
+    "modulo": "campus",
+    "method": "POST",
+    "path": "/api/campus/compras/:referencia/vincular",
+    "controller": "Compra/CTS_Compras.js",
+    "handler": "VINCULAR_Compra_CTS",
+    "perfil": "alumno"
+  },
+  {
+    "modulo": "checkout",
+    "method": "POST",
+    "path": "/api/checkout/navegador/compras/:referencia/registrar-cuenta",
+    "controller": "Compra/CTS_Compras.js",
+    "handler": "REGISTRAR_CuentaCompra_CTS",
+    "perfil": "checkout_cookie"
+  },
+  {
+    "modulo": "compras",
+    "method": "GET",
+    "path": "/api/admin/compras",
+    "controller": "Compra/CTS_TB_Compras.js",
+    "handler": "OBRS_Compras_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "compras",
+    "method": "GET",
+    "path": "/api/admin/compras/:id",
+    "controller": "Compra/CTS_TB_Compras.js",
+    "handler": "OBRS_DetCompra_CTS",
+    "perfil": "admin"
   }
 ]

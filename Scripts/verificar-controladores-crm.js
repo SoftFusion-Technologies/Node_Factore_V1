@@ -8,7 +8,7 @@ import * as Vinculos from '../src/Controllers/Comercio/CTS_TB_ComercioClientes.j
 import { modelos } from '../src/Models/index.js';
 
 try {
-  assert.equal(Object.keys(modelos).length, 18);
+  assert.equal(Object.keys(modelos).length, 21);
   let funciones = 0;
   for (const module of [Clientes, Notas, Comercios, Vinculos]) {
     for (const [name, handler] of Object.entries(module)) {
@@ -18,7 +18,7 @@ try {
     }
   }
   assert.equal(funciones, 21);
-  console.log('Controladores CRM OK:', JSON.stringify({ archivos:4, funciones, modelos:18 }));
+  console.log('Controladores CRM OK:', JSON.stringify({ archivos:4, funciones, modelos:21 }));
   console.log('Verificación local terminada. No se abrió una conexión a MySQL.');
 } catch (error) {
   console.error('Verificación fallida:', error.message);

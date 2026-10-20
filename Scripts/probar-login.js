@@ -26,7 +26,7 @@ try {
   }
   let user = await login();
   if (user.cambiar_password === 1) {
-    console.log('La cuenta requiere cambiar la contraseña. La nueva debe tener entre 15 y 128 caracteres.');
+    console.log('La cuenta requiere cambiar la contraseña. La nueva debe tener entre 8 y 60 caracteres.');
     const nueva = await passwordOculta('Nueva contraseña (entrada oculta): ');
     const repeated = await passwordOculta('Repetir nueva contraseña: ');
     if (nueva !== repeated) throw new Error('Las contraseñas no coinciden.');

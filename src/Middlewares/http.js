@@ -12,7 +12,7 @@ export function cabecerasHttp(req, res, next) {
 }
 
 const metodos = ['GET', 'HEAD', 'POST', 'PATCH', 'DELETE', 'OPTIONS'];
-const headers = ['content-type', 'x-csrf-token', 'range'];
+const headers = ['content-type', 'x-csrf-token', 'x-compra-token', 'x-compra-csrf', 'range'];
 export function corsHttp(req, res, next) {
   try {
     verificarOrigen(req);

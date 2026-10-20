@@ -13,8 +13,12 @@ import { OBRS_ComerciosCampus_CTS, OBRS_DetComercioCampus_CTS } from '../Control
 import { OBRS_VideoCampus_CTS, OBRS_PortadaCursoCampus_CTS, OBRS_PortadaLeccionCampus_CTS, OBRS_MaterialCampus_CTS, OBRS_LogoComercioCampus_CTS } from '../Controllers/Campus/CTS_CampusArchivos.js';
 import { autenticar, exigirPasswordActualizada, soloAlumno } from '../Security/auth.js';
 import { jsonCampus } from '../Middlewares/http.js';
+import { VINCULAR_Compra_CTS } from '../Controllers/Compra/CTS_Compras.js';
+import { limitarCheckout } from '../Middlewares/checkout.js';
 
 const router = express.Router({ caseSensitive: true, strict: true });
+
+router.post('/api/campus/compras/:referencia/vincular', autenticar, exigirPasswordActualizada, soloAlumno, limitarCheckout, jsonCampus, VINCULAR_Compra_CTS);
 
 router.get('/api/campus/cursos', autenticar, exigirPasswordActualizada, soloAlumno, OBRS_MisCursos_CTS);
 router.get('/api/campus/cursos/:curso_id', autenticar, exigirPasswordActualizada, soloAlumno, OBRS_DetMiCurso_CTS);

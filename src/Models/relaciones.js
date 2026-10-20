@@ -1,3 +1,4 @@
+import { initCompraRelaciones } from './Compra/relacionesCompra.js';
 /* Benjamin Orellana - 04/10/2026 - Inicialización central de relaciones Factor E. */
 
 import { initClienteRelaciones } from './Cliente/relacionesCliente.js';
@@ -18,6 +19,7 @@ export function initRelaciones() {
   initAccesoRelaciones();
   initCampusRelaciones();
   initSistemaRelaciones();
+  initCompraRelaciones();
 }
 
 // Sequelize resuelve estas asociaciones por id, único en cada tabla.

@@ -57,7 +57,7 @@ for line in sys.stdin:
                             obj[field] = str(value)
                         elif key in ('detalle','datos_antes','datos_despues') and isinstance(value, str): obj[field] = json.loads(value)
                         elif key == 'tamanio_bytes' and value is not None: obj[field] = str(value)
-                        elif key == 'precio' and value is not None: obj[field] = format(value, '.2f')
+                        elif key in ('precio','total','precio_unitario','importe','importe_reintegrado') and value is not None: obj[field] = format(value, '.2f')
                     result.append(obj)
             else:
                 result = {'insertId':str(cur.lastrowid),'affectedRows':max(cur.rowcount,0)}

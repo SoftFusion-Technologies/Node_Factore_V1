@@ -104,6 +104,24 @@ test('Contenido: Sequelize/MySQL con SQLite aislado y archivos físicos temporal
     ok(await call(Lecciones.UR_CursoLeccion_CTS,{params:{curso_id:curso.id,id:leccion.id},body:{modulo_id:otroModulo.id}}),422);
     ok(await call(Lecciones.UR_CursoLeccion_CTS,{params:{curso_id:curso.id,id:leccion.id},body:{video_archivo_id:null,estado:'PUBLICADA'}}),422);
   });
+  await t.test('Preparación de venta: duración editable, precio, publicación y baja automática',async () => {
+    let row=await modelos.cursos.findByPk(curso.id);
+    assert.equal(row.acceso_duracion_cantidad,1);assert.equal(row.acceso_duracion_unidad,'MESES');assert.equal(row.venta_online_habilitada,0);
+    for(const body of [{acceso_duracion_cantidad:0},{acceso_duracion_cantidad:121,acceso_duracion_unidad:'MESES'},
+      {acceso_duracion_cantidad:3651,acceso_duracion_unidad:'DIAS'},{acceso_duracion_unidad:'HORAS'},
+      {venta_online_habilitada:1,precio:null},{venta_online_habilitada:1,precio:'0.00'},
+      {venta_online_habilitada:1,precio:'220000.00',moneda:'USD'}])ok(await call(Cursos.UR_Curso_CTS,{params:{id:curso.id},body}),422);
+    ok(await call(Cursos.CR_Curso_CTS,{body:{titulo:'Venta borrador',precio:'220000.00',visible_catalogo:1,venta_online_habilitada:1}}),422);
+    const before=await modelos.curso_accesos.count();
+    ok(await call(Cursos.UR_Curso_CTS,{params:{id:curso.id},body:{precio:'220000.00',moneda:'ARS',visible_catalogo:1,venta_online_habilitada:1,acceso_duracion_cantidad:2,acceso_duracion_unidad:'MESES'}}));
+    row=await row.reload();assert.equal(row.venta_online_habilitada,1);assert.equal(row.acceso_duracion_cantidad,2);
+    ok(await call(Cursos.UR_Curso_CTS,{params:{id:curso.id},body:{acceso_duracion_unidad:'DIAS'}}));
+    row=await row.reload();assert.equal(row.acceso_duracion_cantidad,2);assert.equal(row.acceso_duracion_unidad,'DIAS');
+    assert.equal(await modelos.curso_accesos.count(),before);
+    ok(await call(Cursos.UR_Curso_CTS,{params:{id:curso.id},body:{visible_catalogo:0}}));
+    row=await row.reload();assert.equal(row.venta_online_habilitada,0);
+    ok(await call(Cursos.UR_Curso_CTS,{params:{id:curso.id},body:{visible_catalogo:1}}));
+  });
   await t.test('Archivar conserva archivos, asignación y progreso; reactivar recupera contenido',async () => {
     const acceso=await modelos.curso_accesos.create({usuario_id:student.id,curso_id:curso.id,asignado_por:admin.id});
     const progress=await modelos.leccion_progreso.create({usuario_id:student.id,curso_id:curso.id,leccion_id:leccion.id,posicion_segundos:45});

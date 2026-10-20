@@ -8,8 +8,9 @@ async function derive(value,salt) {
   exigir(active<2,429,'AUTH_OCUPADA','Hay demasiados intentos simultáneos. Reintentá.');
   active++;try {return await scrypt(value,salt,64,options);} finally {active--;}
 }
+// Benjamin Orellana - 19/10/2026 - Política para contraseñas nuevas; no cambia la verificación de claves existentes.
 export function password(value) {
-  exigir(typeof value==='string' && [...value].length>=15 && [...value].length<=128 && Buffer.byteLength(value)<=1024 && !value.includes('\0'),422,'PASSWORD_INVALIDO','La contraseña debe tener entre 15 y 128 caracteres.');
+  exigir(typeof value==='string' && [...value].length>=8 && [...value].length<=60 && Buffer.byteLength(value)<=1024 && !value.includes('\0'),422,'PASSWORD_INVALIDO','La contraseña debe tener entre 8 y 60 caracteres.');
   return value;
 }
 export function hashValido(hash) {return typeof hash==='string' && /^scrypt\$65536\$8\$2\$[a-f0-9]{32}\$[a-f0-9]{128}$/.test(hash);}

@@ -1,11 +1,12 @@
 {
   "dependencies": {
-    "dotenv": "18.0.5",
-    "mysql2": "3.24.5",
-    "sequelize": "6.37.8",
     "busboy": "1.6.0",
-    "yauzl": "3.4.0",
-    "express": "5.2.1"
+    "dotenv": "18.0.5",
+    "express": "5.2.1",
+    "mysql2": "3.24.5",
+    "nodemailer": "9.1.1",
+    "sequelize": "6.37.8",
+    "yauzl": "3.4.0"
   },
   "name": "node-factore-v1",
   "version": "0.6.0",

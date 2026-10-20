@@ -6,3 +6,19 @@ storage/
 coverage/
 *.log
 *.zip
+
+# Factor E: configuración privada y archivos generados
+.env
+.env.*
+!.env.example
+!.env.portal.example
+node_modules/
+dist/
+storage/
+uploads/
+backups/
+coverage/
+*.log
+*.zip
+*.pem
+*.key

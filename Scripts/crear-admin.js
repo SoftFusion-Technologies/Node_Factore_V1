@@ -14,7 +14,7 @@ try {
   const reader=createInterface({input:process.stdin,output:process.stdout});
   let nombre,email;
   try {nombre=(await reader.question('Nombre del administrador: ')).trim();email=(await reader.question('Email del administrador: ')).trim();} finally {reader.close();}
-  console.log('La contraseña necesita 15 a 128 caracteres. La entrada queda oculta.');
+  console.log('La contraseña necesita 8 a 60 caracteres. La entrada queda oculta.');
   const password=await passwordOculta('Contraseña: '),confirmation=await passwordOculta('Repetir contraseña: ');
   exigir(password===confirmation,422,'PASSWORD_CONFIRMACION','Las contraseñas no coinciden.');
   const user=await crearPrimerAdmin({nombre,email,password});

@@ -149,12 +149,16 @@ CREATE TABLE cursos (
   estado TEXT NOT NULL DEFAULT 'BORRADOR' CHECK (estado IN ('BORRADOR','PUBLICADO','ARCHIVADO')),
   visible_catalogo INTEGER NOT NULL DEFAULT 0,
   orden INTEGER NOT NULL DEFAULT 0,
+  venta_online_habilitada INTEGER NOT NULL DEFAULT 0 CHECK (venta_online_habilitada IN (0,1)),
+  acceso_duracion_cantidad INTEGER NOT NULL DEFAULT 1,
+  acceso_duracion_unidad TEXT NOT NULL DEFAULT 'MESES' CHECK (acceso_duracion_unidad IN ('DIAS','MESES')),
   creado_por INTEGER NOT NULL,
   creado_en TEXT NOT NULL DEFAULT (UTC_TIMESTAMP(3)),
   actualizado_en TEXT NOT NULL DEFAULT (UTC_TIMESTAMP(3)),
   PRIMARY KEY (id),
   UNIQUE (slug),
   CONSTRAINT ck_cursos_precio CHECK (precio IS NULL OR precio >= 0),
+  CONSTRAINT ck_cursos_duracion CHECK ((acceso_duracion_unidad='DIAS' AND acceso_duracion_cantidad BETWEEN 1 AND 3650) OR (acceso_duracion_unidad='MESES' AND acceso_duracion_cantidad BETWEEN 1 AND 120)),
   CONSTRAINT ck_cursos_visible CHECK (visible_catalogo IN (0,1)),
   CONSTRAINT fk_cursos_portada FOREIGN KEY (portada_archivo_id) REFERENCES archivos(id) ON DELETE RESTRICT,
   CONSTRAINT fk_cursos_usuario FOREIGN KEY (creado_por) REFERENCES usuarios(id) ON DELETE RESTRICT
@@ -375,3 +379,72 @@ CREATE TABLE archivos_eliminaciones (
 CREATE TRIGGER archivos_eliminaciones_actualizar AFTER UPDATE ON archivos_eliminaciones BEGIN
  UPDATE archivos_eliminaciones SET actualizado_en=UTC_TIMESTAMP(3) WHERE id=NEW.id;
 END;
+
+CREATE TABLE compras (
+  id INTEGER NOT NULL,
+  referencia TEXT NOT NULL,
+  token_hash TEXT NOT NULL,
+  solicitud_hash TEXT NOT NULL,
+  comprador_nombre TEXT NOT NULL,
+  comprador_email TEXT NOT NULL,
+  usuario_id INTEGER NULL,
+  estado TEXT NOT NULL CHECK (estado IN ('PENDIENTE','PAGADA','CANCELADA')) DEFAULT 'PENDIENTE',
+  moneda TEXT NOT NULL DEFAULT 'ARS',
+  total NUMERIC NOT NULL,
+  vence_en TEXT NOT NULL,
+  pagada_en TEXT NULL,
+  creado_en TEXT NOT NULL DEFAULT (UTC_TIMESTAMP(3)),
+  mp_preferencia_estado TEXT NOT NULL DEFAULT 'SIN_CREAR' CHECK (mp_preferencia_estado IN ('SIN_CREAR','CREANDO','DISPONIBLE','INCIERTA','ERROR')),
+  mp_preferencia_id TEXT NULL,
+  mp_checkout_url TEXT NULL,
+  mp_error_codigo TEXT NULL,
+  actualizado_en TEXT NOT NULL DEFAULT (UTC_TIMESTAMP(3)),
+  PRIMARY KEY (id),
+  UNIQUE (referencia),
+  CONSTRAINT fk_compras_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE RESTRICT,
+  CONSTRAINT ck_compras_mp CHECK (mp_preferencia_estado <> 'DISPONIBLE' OR (mp_preferencia_id IS NOT NULL AND mp_checkout_url IS NOT NULL)),
+  CONSTRAINT ck_compras_total CHECK (total > 0),
+  CONSTRAINT ck_compras_moneda CHECK (moneda = 'ARS'),
+  CONSTRAINT ck_compras_ventana CHECK (vence_en > creado_en),
+  CONSTRAINT ck_compras_pago CHECK ((estado = 'PAGADA' AND pagada_en IS NOT NULL) OR (estado <> 'PAGADA' AND pagada_en IS NULL))
+);
+
+CREATE TABLE compra_items (
+  id INTEGER NOT NULL,
+  compra_id INTEGER NOT NULL,
+  curso_id INTEGER NOT NULL,
+  titulo TEXT NOT NULL,
+  slug TEXT NOT NULL,
+  precio_unitario NUMERIC NOT NULL,
+  moneda TEXT NOT NULL DEFAULT 'ARS',
+  acceso_duracion_cantidad INTEGER NOT NULL,
+  acceso_duracion_unidad TEXT NOT NULL CHECK (acceso_duracion_unidad IN ('DIAS','MESES')),
+  creado_en TEXT NOT NULL DEFAULT (UTC_TIMESTAMP(3)),
+  PRIMARY KEY (id),
+  UNIQUE (compra_id,curso_id),
+  CONSTRAINT fk_compra_items_compra FOREIGN KEY (compra_id) REFERENCES compras(id) ON DELETE RESTRICT,
+  CONSTRAINT fk_compra_items_curso FOREIGN KEY (curso_id) REFERENCES cursos(id) ON DELETE RESTRICT,
+  CONSTRAINT ck_compra_items_precio CHECK (precio_unitario > 0),
+  CONSTRAINT ck_compra_items_moneda CHECK (moneda = 'ARS'),
+  CONSTRAINT ck_compra_items_duracion CHECK ((acceso_duracion_unidad='DIAS' AND acceso_duracion_cantidad BETWEEN 1 AND 3650) OR (acceso_duracion_unidad='MESES' AND acceso_duracion_cantidad BETWEEN 1 AND 120))
+);
+
+CREATE TABLE compra_pagos (
+  id INTEGER NOT NULL PRIMARY KEY,
+  compra_id INTEGER NOT NULL REFERENCES compras(id) ON DELETE RESTRICT,
+  mp_pago_id INTEGER NOT NULL UNIQUE CHECK(mp_pago_id>0),
+  estado TEXT NOT NULL,
+  detalle_estado TEXT NULL,
+  validacion TEXT NOT NULL CHECK(validacion IN ('VALIDADO','REVISION')),
+  motivo_revision TEXT NULL,
+  importe NUMERIC NOT NULL CHECK(importe>=0),
+  importe_reintegrado NUMERIC NOT NULL DEFAULT '0.00' CHECK(importe_reintegrado>=0),
+  moneda TEXT NOT NULL,
+  modo_prueba INTEGER NOT NULL DEFAULT 1 CHECK(modo_prueba=1),
+  mp_actualizado_en TEXT NOT NULL,
+  aprobado_en TEXT NULL,
+  verificado_en TEXT NOT NULL,
+  creado_en TEXT NOT NULL DEFAULT (UTC_TIMESTAMP(3)),
+  actualizado_en TEXT NOT NULL DEFAULT (UTC_TIMESTAMP(3)),
+  CHECK ((validacion='VALIDADO' AND motivo_revision IS NULL) OR (validacion='REVISION' AND motivo_revision IS NOT NULL))
+);

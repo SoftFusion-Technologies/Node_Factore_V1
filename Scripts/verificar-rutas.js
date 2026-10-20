@@ -1,9 +1,11 @@
+import * as MP from '../src/Middlewares/mercadoPago.js';
 /* Benjamin Orellana - 05/10/2026 - Contrato de rutas, cobertura y cadenas de permisos. */
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { crearApp } from '../app.js';
 import routes from '../src/Routes/index.js';
 import * as Security from '../src/Security/auth.js';
+import * as Checkout from '../src/Middlewares/checkout.js';
 import * as Http from '../src/Middlewares/http.js';
 import db from '../src/DataBase/db.js';
 
@@ -27,6 +29,23 @@ try {
     const controller = await import('../src/Controllers/' + expected.controller);
     assert.equal(row.handlers.at(-1), controller[expected.handler], `Controlador incorrecto: ${key}`);
     seen.add(controller[expected.handler]);
+    if (expected.perfil === 'webhook') {
+      assert.equal(row.method,'POST');
+      assert.deepEqual(row.handlers.slice(0,-1),[MP.autenticarWebhookMP,Http.jsonAuth]);
+    }
+    if (expected.perfil === 'checkout') {
+      assert.deepEqual(row.handlers.slice(0,3),[Security.protegerOrigen,Checkout.limitarCheckout,Checkout.tokenCompra]);
+    }
+    if (expected.perfil === 'checkout_cookie') {
+      assert.deepEqual(row.handlers.slice(0,3),[Security.protegerOrigen,Checkout.limitarCheckout,Checkout.cookieCompra]);
+    }
+    if (expected.perfil === 'checkout_preparar') {
+      assert.deepEqual(row.handlers.slice(0,3),[Security.protegerOrigen,Checkout.limitarCheckout,Checkout.origenNavegador]);
+    }
+    if (expected.perfil === 'catalogo') {
+      assert.equal(row.method, 'GET', 'El catálogo público es de solo lectura.');
+      assert.deepEqual(row.handlers.slice(0, -1), [Security.protegerOrigen]);
+    }
     if (expected.perfil === 'admin' || expected.perfil === 'alumno') {
       assert.deepEqual(row.handlers.slice(0, 3), [Security.autenticar, Security.exigirPasswordActualizada,
         expected.perfil === 'admin' ? Security.soloAdmin : Security.soloAlumno], `Permiso incorrecto: ${key}`);
@@ -46,12 +65,12 @@ try {
       if (typeof handler === 'function') { functions++; assert.ok(seen.has(handler), `${file}: ${name} no tiene ruta.`); }
     }
   }
-  assert.equal(functions, 90);
+  assert.equal(functions, 104);
   const app = crearApp();
   assert.equal(app.get('trust proxy'), process.env.TRUST_PROXY === 'loopback' ? 'loopback' : false);
   assert.equal(app.get('query parser'), 'simple');
   assert.equal(app.enabled('x-powered-by'), false);
-  console.log('Rutas y servidor OK: ' + JSON.stringify({ modulos: 15, rutas: actual.length, controladores: files.size, funciones: functions }));
+  console.log('Rutas y servidor OK: ' + JSON.stringify({ modulos: 19, rutas: actual.length, controladores: files.size, funciones: functions }));
   console.log('Verificación local terminada. No se abrió una conexión a MySQL.');
 } catch (error) { console.error(error.message); process.exitCode = 1; }
 finally { await db.close(); }

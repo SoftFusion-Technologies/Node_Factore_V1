@@ -10,7 +10,7 @@ import { consulta, busqueda, listar } from '../../utils/listados.utils.js';
 import { precio, conContenido } from '../../Services/Curso/contenido.service.js';
 import { atributosArchivo, bloquearArchivos, validarArchivo, encolarSinReferencias } from '../../Services/Archivo/archivoReferencias.service.js';
 
-const campos = ['titulo','slug','descripcion_corta','descripcion','portada_archivo_id','precio','moneda','modalidad','estado','visible_catalogo','orden'];
+const campos = ['titulo','slug','descripcion_corta','descripcion','portada_archivo_id','precio','moneda','modalidad','estado','visible_catalogo','orden','venta_online_habilitada','acceso_duracion_cantidad','acceso_duracion_unidad'];
 const estados = ['BORRADOR','PUBLICADO','ARCHIVADO'];
 const modalidades = ['VIRTUAL','PRESENCIAL','MIXTA'];
 const portada = {model:ArchivosModel,as:'portada',attributes:atributosArchivo,required:false};
@@ -27,11 +27,26 @@ function validar(body, crear = false) {
       exigir(/^[A-Z]{3}$/.test(data.moneda),422,'DATOS_INVALIDOS','moneda debe tener tres letras.');
     } else if (name === 'modalidad') data[name] = opcion(value,name,modalidades);
     else if (name === 'estado') data[name] = opcion(value,name,estados);
-    else if (name === 'visible_catalogo') data[name] = bandera(value,name);
+    else if (name === 'acceso_duracion_unidad') data[name] = opcion(value,name,['DIAS','MESES']);
+    else if (name === 'acceso_duracion_cantidad') data[name] = entero(value,name);
+    else if (['visible_catalogo','venta_online_habilitada'].includes(name)) data[name] = bandera(value,name);
     else data.orden = entero(value,name);
   }
   if (crear && data.slug === undefined) data.slug = slugDesdeNombre(data.titulo);
   return data;
+}
+function validarPolitica(data, row = {}) {
+  const cantidad = data.acceso_duracion_cantidad ?? row.acceso_duracion_cantidad ?? 1;
+  const unidad = data.acceso_duracion_unidad ?? row.acceso_duracion_unidad ?? 'MESES';
+  exigir(cantidad >= 1 && cantidad <= (unidad === 'MESES' ? 120 : 3650),422,'DATOS_INVALIDOS','Duración: de 1 a 120 meses o de 1 a 3650 días.');
+  const enabled = data.venta_online_habilitada ?? row.venta_online_habilitada ?? 0;
+  if (enabled) {
+    const importe = data.precio !== undefined ? data.precio : row.precio;
+    const positivo = typeof importe === 'string' && /^\d+(?:\.\d{1,2})?$/.test(importe) && BigInt(importe.replace('.','')) > 0n;
+    exigir((data.estado ?? row.estado) === 'PUBLICADO' && (data.visible_catalogo ?? row.visible_catalogo) === 1 &&
+      (data.moneda ?? row.moneda ?? 'ARS') === 'ARS' && positivo,
+      422,'VENTA_ONLINE_NO_DISPONIBLE','Para habilitar la venta online, publicá el contenido, mostrá el curso en la web y definí un precio positivo en ARS.');
+  }
 }
 async function validarPublicacion(cursoId, transaction,portadas) {
   const lecciones = await LeccionesModel.findAll({where:{curso_id:cursoId,estado:'PUBLICADA'},
@@ -60,6 +75,7 @@ export const OBRS_DetCurso_CTS = controlador(async req => {
 });
 export const CR_Curso_CTS = controlador(async (req,actor) => {
   const data = validar(req.body,true);
+  validarPolitica({...data,estado:data.estado ?? 'BORRADOR'});
   exigir(data.estado !== 'PUBLICADO',422,'CURSO_SIN_CONTENIDO','Crear el curso en borrador y agregar su contenido antes de publicarlo.');
   return conContenido(req,actor,'CURSO_CREADO','cursos',async transaction => {
     const files = await bloquearArchivos([data.portada_archivo_id],transaction);
@@ -76,8 +92,11 @@ async function actualizar(req,actor,archivar) {
   return conContenido(req,actor,archivar ? 'CURSO_ARCHIVADO' : 'CURSO_ACTUALIZADO','cursos',async transaction => {
     const row = await CursosModel.findByPk(cursoId,{transaction,lock:transaction.LOCK.UPDATE});
     exigir(row,404,'NO_ENCONTRADO','Curso no encontrado.');
+    if (data.estado === 'BORRADOR' || data.estado === 'ARCHIVADO' || data.visible_catalogo === 0) data.venta_online_habilitada = 0;
+    validarPolitica(data,row);
+    const habilitaVenta = data.venta_online_habilitada === 1 && row.venta_online_habilitada !== 1;
     const portadas = [row.portada_archivo_id,data.portada_archivo_id];
-    const files = data.estado === 'PUBLICADO' ? await validarPublicacion(row.id,transaction,portadas)
+    const files = data.estado === 'PUBLICADO' || habilitaVenta ? await validarPublicacion(row.id,transaction,portadas)
       : await bloquearArchivos(portadas,transaction);
     if (data.portada_archivo_id !== undefined) await validarArchivo(data.portada_archivo_id,'IMAGEN',files);
     const anterior = row.portada_archivo_id;

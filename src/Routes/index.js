@@ -1,3 +1,5 @@
+import mercadoPagoRoutes from './mercadoPago.routes.js';
+import checkoutRoutes from './checkout.routes.js';
 /* Benjamin Orellana - 05/10/2026 - Orquestador de rutas de Factor E. */
 import express from 'express';
 import healthRoutes from './health.routes.js';
@@ -15,6 +17,9 @@ import archivosRoutes from './archivos.routes.js';
 import accesosRoutes from './accesos.routes.js';
 import seguimientoRoutes from './seguimiento.routes.js';
 import campusRoutes from './campus.routes.js';
+import catalogoRoutes from './catalogo.routes.js';
+// Benjamin Orellana - 19/10/2026 - Consultas privadas de compras.
+import comprasRoutes from './compras.routes.js';
 
 const router = express.Router({ caseSensitive: true, strict: true });
 router.use(healthRoutes);
@@ -32,5 +37,9 @@ router.use(archivosRoutes);
 router.use(accesosRoutes);
 router.use(campusRoutes);
 router.use(seguimientoRoutes);
+router.use(catalogoRoutes);
+router.use(checkoutRoutes);
+router.use(mercadoPagoRoutes);
+router.use(comprasRoutes);
 
 export default router;

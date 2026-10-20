@@ -14,8 +14,8 @@ try {
     assert.deepEqual(Object.keys(module).sort(),[...names].sort());
     for (const name of names) assert.equal(typeof module[name],'function',name);
   }
-  assert.equal(Object.keys(modelos).length,18);
-  console.log('Controladores cursos OK: '+JSON.stringify({archivos:4,funciones:21,modelos:18}));
+  assert.equal(Object.keys(modelos).length,21);
+  console.log('Controladores cursos OK: '+JSON.stringify({archivos:4,funciones:21,modelos:21}));
   console.log('Verificación local terminada. No se abrió una conexión a MySQL.');
 } catch (error) { console.error(error.message); process.exitCode = 1; }
 finally { await db.close(); }
