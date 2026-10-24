@@ -1,6 +1,17 @@
+/* Benjamin Orellana - 24/10/2026 - Integración de compra y habilitación de Mi agenda. */
+import AgendaComprasModel from './Agenda/MD_TB_AgendaCompras.js';
+/* Benjamin Orellana - 22/10/2026 - Configuración comercial de Mi agenda. */
+import AgendaVentaConfiguracionModel from './Agenda/MD_TB_AgendaVentaConfiguracion.js';
 import CompraPagosModel from './Compra/MD_TB_CompraPagos.js';
 import ComprasModel from './Compra/MD_TB_Compras.js';
 import CompraItemsModel from './Compra/MD_TB_CompraItems.js';
+/* Benjamin Orellana - 20/10/2026 - Registro de los seis modelos de Mi agenda. */
+import AgendaAccesosModel from './Agenda/MD_TB_AgendaAccesos.js';
+import AgendaPreferenciasModel from './Agenda/MD_TB_AgendaPreferencias.js';
+import AgendaDiasModel from './Agenda/MD_TB_AgendaDias.js';
+import AgendaTareasModel from './Agenda/MD_TB_AgendaTareas.js';
+import AgendaNotasModel from './Agenda/MD_TB_AgendaNotas.js';
+import AgendaTiempoRegistrosModel from './Agenda/MD_TB_AgendaTiempoRegistros.js';
 /* Factor E: registro de modelos. Las relaciones se inicializan desde relaciones.js. */
 
 import ClientesModel from './Cliente/MD_TB_Clientes.js';
@@ -23,6 +34,9 @@ import AuditoriaEventosModel from './Sistema/MD_TB_AuditoriaEventos.js';
 import ArchivosEliminacionesModel from './Archivo/MD_TB_ArchivosEliminaciones.js';
 
 export {
+  AgendaVentaConfiguracionModel,
+  AgendaAccesosModel, AgendaPreferenciasModel, AgendaDiasModel,
+  AgendaTareasModel, AgendaNotasModel, AgendaTiempoRegistrosModel,
   ComprasModel, CompraItemsModel, CompraPagosModel,
   ClientesModel,
   UsuariosModel,
@@ -45,6 +59,14 @@ export {
 };
 
 export const modelos = {
+  agenda_compras: AgendaComprasModel,
+  agenda_venta_configuracion: AgendaVentaConfiguracionModel,
+  agenda_accesos: AgendaAccesosModel,
+  agenda_preferencias: AgendaPreferenciasModel,
+  agenda_dias: AgendaDiasModel,
+  agenda_tareas: AgendaTareasModel,
+  agenda_notas: AgendaNotasModel,
+  agenda_tiempo_registros: AgendaTiempoRegistrosModel,
   compras: ComprasModel, compra_items: CompraItemsModel, compra_pagos: CompraPagosModel,
   crm_clientes: ClientesModel,
   usuarios: UsuariosModel,

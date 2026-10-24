@@ -1,3 +1,6 @@
+/* Benjamin Orellana - 24/10/2026 - Integración de compra y habilitación de Mi agenda. */
+/* Benjamin Orellana - 22/10/2026 - Catálogo actualizado con la configuración comercial de Agenda. */
+/* Benjamin Orellana - 20/10/2026 - Verificación compatible con modelos de Agenda. */
 /* Benjamin Orellana - 13/10/2026 - Verificación local de servicios de compras. */
 import assert from 'node:assert/strict';
 import db from '../src/DataBase/db.js';
@@ -6,7 +9,7 @@ import { initRelaciones } from '../src/Models/relaciones.js';
 import * as compras from '../src/Services/Compra/compra.service.js';
 try {
   initRelaciones();
-  assert.equal(Object.keys(modelos).length,21);
+  assert.equal(Object.keys(modelos).length,29);
   for(const name of ['crearCompra','obtenerCompra','cancelarCompra'])assert.equal(typeof compras[name],'function');
   assert.ok(modelos.compras.associations.items);
   assert.ok(modelos.compra_items.associations.curso);

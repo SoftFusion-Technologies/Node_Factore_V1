@@ -1,3 +1,4 @@
+/* Benjamin Orellana - 24/10/2026 - Integración de compra y habilitación de Mi agenda. */
 /* Benjamin Orellana - 13/10/2026 - Checkout Pro de prueba; credenciales solo en backend. */
 import { isIP } from 'node:net';
 import { ErrorHttp, exigir } from '../../utils/validacion.utils.js';
@@ -23,7 +24,7 @@ export function cuerpoPreferencia(compra, items, config) {
     items:items.map(item=>{
       const price = Number(item.precio_unitario);
       exigir(Number.isFinite(price) && price > 0 && price.toFixed(2) === item.precio_unitario,422,'MP_IMPORTE_INVALIDO','El importe no puede enviarse al proveedor.');
-      return {id:String(item.curso_id),title:item.titulo,currency_id:item.moneda,quantity:1,unit_price:price};
+      return {id:String(item.producto_id ?? item.curso_id),title:item.titulo,currency_id:item.moneda,quantity:1,unit_price:price};
     }),
     payer:{name:compra.comprador_nombre,email:compra.comprador_email},
     expires:true,expiration_date_from:fecha(compra.creado_en).toISOString(),expiration_date_to:fecha(compra.vence_en).toISOString(),

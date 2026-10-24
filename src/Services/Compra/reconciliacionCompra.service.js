@@ -1,7 +1,8 @@
+/* Benjamin Orellana - 24/10/2026 - Integración de compra y habilitación de Mi agenda. */
 /* Benjamin Orellana - 13/10/2026 - Recuperación administrativa sin crear otro cobro. */
 import db from '../../DataBase/db.js';
 import ComprasModel from '../../Models/Compra/MD_TB_Compras.js';
-import ItemsModel from '../../Models/Compra/MD_TB_CompraItems.js';
+import { itemsPagoCompra } from './itemsPago.service.js';
 import PagosModel from '../../Models/Compra/MD_TB_CompraPagos.js';
 import AuditoriaModel from '../../Models/Sistema/MD_TB_AuditoriaEventos.js';
 import { ahoraCompra } from './compra.service.js';
@@ -32,7 +33,7 @@ function verificarPreferencia(pref,compra,items,config) {
   exigir(Array.isArray(pref.items) && pref.items.length===items.length && items.length>0,409,'MP_PREFERENCIA_DISTINTA','Los cursos de la preferencia no coinciden.');
   const seen=new Set();let cents=0n;
   for(const row of pref.items) {
-    const courseId=id(row.id),item=items.find(item=>String(item.curso_id)===courseId);
+    const courseId=String(row.id),item=items.find(item=>item.producto_id===courseId);
     exigir(item && !seen.has(courseId) && row.quantity===1 && compra.moneda==='ARS' && item.moneda===compra.moneda && row.currency_id===item.moneda &&
       decimalMP(row.unit_price)===item.precio_unitario,409,'MP_PREFERENCIA_DISTINTA','El importe o los cursos de la preferencia no coinciden.');
     seen.add(courseId);cents+=BigInt(item.precio_unitario.replace('.',''));
@@ -43,7 +44,7 @@ function verificarPreferencia(pref,compra,items,config) {
 async function recuperarPreferencia(compra,config) {
   if(compra.mp_preferencia_id)return false;
   const prefId=await buscarPreferenciaCompra(compra,config),pref=await obtenerPreferenciaMP(prefId,config);
-  const items=await ItemsModel.findAll({where:{compra_id:compra.id}}),url=verificarPreferencia(pref,compra,items,config);
+  const items=await itemsPagoCompra(compra),url=verificarPreferencia(pref,compra,items,config);
   return db.transaction(async transaction=>{
     const current=await ComprasModel.findByPk(compra.id,{transaction,lock:transaction.LOCK.UPDATE});
     if(current.mp_preferencia_id) {

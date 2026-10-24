@@ -4,8 +4,9 @@ import { spawn } from 'node:child_process';
 import { createInterface } from 'node:readline';
 import { fileURLToPath } from 'node:url';
 
-export async function conectarPrueba(db, {fixture = 'crm.sqlite.sql'} = {}) {
-  const child = spawn('python3', [fileURLToPath(new URL('./sqlite_crm_bridge.py', import.meta.url)),fixture], { stdio:['pipe','pipe','pipe'] });
+// Benjamin Orellana - 20/10/2026 - Fixtures adicionales sin duplicar CRM/campus.
+export async function conectarPrueba(db, {fixture = 'crm.sqlite.sql', extras = []} = {}) {
+  const child = spawn('python3', [fileURLToPath(new URL('./sqlite_crm_bridge.py', import.meta.url)),fixture,...extras], { stdio:['pipe','pipe','pipe'] });
   const pending = new Map();
   let sequence = 0, readyResolve, readyReject, stderr = '';
   const ready = new Promise((resolve, reject) => { readyResolve = resolve; readyReject = reject; });

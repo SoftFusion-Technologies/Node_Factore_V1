@@ -1,3 +1,6 @@
+/* Benjamin Orellana - 24/10/2026 - Integración de compra y habilitación de Mi agenda. */
+/* Benjamin Orellana - 22/10/2026 - Catálogo actualizado con la configuración comercial de Agenda. */
+/* Benjamin Orellana - 20/10/2026 - Verificación compatible con modelos de Agenda. */
 /* Benjamin Orellana - 04/10/2026 - Verificación de modelos y relaciones de Factor E. */
 import assert from 'node:assert/strict';
 import { QueryTypes } from 'sequelize';
@@ -20,7 +23,7 @@ function normalizarTipo(value) {
 }
 
 function verificarLocales() {
-  assert.equal(Object.keys(modelos).length, 21, 'Se esperan 21 modelos.');
+  assert.equal(Object.keys(modelos).length, 29, 'Se esperan 29 modelos.');
   const camposAntes = Object.fromEntries(Object.entries(modelos).map(([table, model]) =>
     [table, Object.keys(model.rawAttributes)]));
   initRelaciones();
@@ -34,7 +37,8 @@ function verificarLocales() {
     assert.equal(model.options.timestamps, false);
     assert.deepEqual(Object.keys(model.rawAttributes), camposAntes[table], `${table}: asociación agregó campos.`);
     assert.deepEqual(model.primaryKeyAttributes, ['id']);
-    assert.equal(model.rawAttributes.id.autoIncrement, true);
+    // Benjamin Orellana - 22/10/2026 - Solo la configuración única usa ID fijo, sin autoincremento.
+    assert.equal(model.rawAttributes.id.autoIncrement, table !== 'agenda_venta_configuracion', `${table}: autoincremento del modelo incorrecto.`);
     assert.equal(normalizarTipo(model.rawAttributes.id.type.toSql()), 'bigint unsigned');
     campos += Object.keys(model.rawAttributes).length;
     for (const relation of Object.values(model.associations)) {
@@ -45,13 +49,13 @@ function verificarLocales() {
       }
     }
   }
-  assert.equal(campos, 232, 'La estructura instalada contiene 232 columnas.');
-  assert.equal(relaciones, 76, 'Se esperan 76 asociaciones, incluidas las inversas y comerciales.');
+  assert.equal(campos, 319, 'La estructura instalada contiene 319 columnas.');
+  assert.equal(relaciones, 104, 'Se esperan 104 asociaciones, incluidas las inversas y comerciales.');
   for (const [table, secret] of [['compras','token_hash'],['usuarios','password_hash'],['usuarios_sesiones','token_hash'],['usuarios_tokens','token_hash']]) {
     assert.ok(modelos[table].options.defaultScope.attributes.exclude.includes(secret));
     assert.deepEqual(modelos[table].scope('conHash')._scope.attributes.exclude, []);
   }
-  return { modelos: 21, campos, asociaciones: relaciones };
+  return { modelos: 29, campos, asociaciones: relaciones };
 }
 
 async function verificarMySQL() {
@@ -117,16 +121,16 @@ async function verificarMySQL() {
     }
   }
   const serializar = key => JSON.stringify([key.table,key.fields,key.target,key.targetFields,key.onDelete]);
-  assert.equal(expectedFK.length, 34);
-  assert.deepEqual([...grouped.values()].map(serializar).sort(), expectedFK.map(serializar).sort(), 'Las 34 claves foráneas no coinciden.');
+  assert.equal(expectedFK.length, 45);
+  assert.deepEqual([...grouped.values()].map(serializar).sort(), expectedFK.map(serializar).sort(), 'Las 45 claves foráneas no coinciden.');
   const checks = await select(`SELECT TABLE_NAME,CONSTRAINT_NAME,ENFORCED FROM information_schema.TABLE_CONSTRAINTS
     WHERE CONSTRAINT_SCHEMA=:schema AND CONSTRAINT_TYPE='CHECK'`, schema);
   const ownChecks = checks.filter(c => modelos[c.TABLE_NAME]);
-  assert.equal(ownChecks.length, 29, 'Se esperan 29 CHECK en las tablas de Factor E.');
+  assert.equal(ownChecks.length, 65, 'Se esperan 65 CHECK en las tablas de Factor E.');
   assert.ok(ownChecks.every(c => c.ENFORCED === 'YES'), 'Hay CHECK no efectivos.');
   const unique = statistics.filter(row => modelos[row.TABLE_NAME] && row.INDEX_NAME !== 'PRIMARY' && Number(row.NON_UNIQUE) === 0);
-  assert.equal(new Set(unique.map(row => `${row.TABLE_NAME}.${row.INDEX_NAME}`)).size, 19, 'Se esperan 19 índices únicos.');
-  return {...motor, vistas:4, claves_foraneas:34, claves_compuestas:5, checks:29, indices_unicos:19};
+  assert.equal(new Set(unique.map(row => `${row.TABLE_NAME}.${row.INDEX_NAME}`)).size, 25, 'Se esperan 25 índices únicos.');
+  return {...motor, vistas:4, claves_foraneas:45, claves_compuestas:8, checks:65, indices_unicos:25};
 }
 
 try {

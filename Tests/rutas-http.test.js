@@ -80,9 +80,10 @@ test('Rutas: aplicación Express completa, cookies, módulos, multipart y campus
     await json('/api/status', { jar: null, headers: { origin: 'https://ajeno.example.invalid' } }, 403);
     await json('/api/status', { jar: null, method: 'OPTIONS', headers: { origin: 'http://localhost:5173', 'access-control-request-headers': 'Authorization' } }, 403);
   });
-  await t.test('Todas las 95 rutas protegidas rechazan IDs libres sin cookie válida', async () => {
+  // Benjamin Orellana - 21/10/2026 - Incorporar las 18 rutas autenticadas de Agenda.
+  await t.test('Todas las 121 rutas protegidas rechazan IDs libres sin cookie válida', async () => {
     const protectedRoutes = contract.filter(x => !['catalogo','checkout','checkout_cookie','checkout_preparar','webhook'].includes(x.perfil) && (x.perfil !== 'auth' || ['OBRS_MiPerfil_CTS', 'UR_MiPassword_CTS'].includes(x.handler)));
-    assert.equal(protectedRoutes.length, 95);
+    assert.equal(protectedRoutes.length, 121);
     for (const route of protectedRoutes) {
       const res = await send(route.path.replace(/:[^/]+/g, '1'), { jar: null, method: route.method,
         ...(!['GET', 'HEAD'].includes(route.method) ? { body: {} } : {}), headers: { 'x-user-id': String(admin.id), authorization: 'Bearer ID-LIBRE' } });

@@ -901,5 +901,213 @@
     "controller": "Compra/CTS_TB_Compras.js",
     "handler": "OBRS_DetCompra_CTS",
     "perfil": "admin"
+  },
+  {
+    "modulo": "agenda",
+    "method": "GET",
+    "path": "/api/agenda/estado",
+    "controller": "Agenda/CTS_Agenda.js",
+    "handler": "OBRS_EstadoMiAgenda_CTS",
+    "perfil": "agenda"
+  },
+  {
+    "modulo": "agenda",
+    "method": "GET",
+    "path": "/api/agenda/mes",
+    "controller": "Agenda/CTS_Agenda.js",
+    "handler": "OBRS_MiAgendaMes_CTS",
+    "perfil": "agenda"
+  },
+  {
+    "modulo": "agenda",
+    "method": "GET",
+    "path": "/api/agenda/dias/:fecha",
+    "controller": "Agenda/CTS_Agenda.js",
+    "handler": "OBRS_MiAgendaDia_CTS",
+    "perfil": "agenda"
+  },
+  {
+    "modulo": "agenda",
+    "method": "PATCH",
+    "path": "/api/agenda/dias/:fecha",
+    "controller": "Agenda/CTS_Agenda.js",
+    "handler": "UR_MiAgendaDia_CTS",
+    "perfil": "agenda"
+  },
+  {
+    "modulo": "agenda",
+    "method": "PATCH",
+    "path": "/api/agenda/preferencias",
+    "controller": "Agenda/CTS_Agenda.js",
+    "handler": "UR_MisPreferenciasAgenda_CTS",
+    "perfil": "agenda"
+  },
+  {
+    "modulo": "agenda",
+    "method": "POST",
+    "path": "/api/agenda/dias/:fecha/tareas",
+    "controller": "Agenda/CTS_TB_AgendaTareas.js",
+    "handler": "CR_AgendaTarea_CTS",
+    "perfil": "agenda"
+  },
+  {
+    "modulo": "agenda",
+    "method": "PATCH",
+    "path": "/api/agenda/tareas/:id",
+    "controller": "Agenda/CTS_TB_AgendaTareas.js",
+    "handler": "UR_AgendaTarea_CTS",
+    "perfil": "agenda"
+  },
+  {
+    "modulo": "agenda",
+    "method": "DELETE",
+    "path": "/api/agenda/tareas/:id",
+    "controller": "Agenda/CTS_TB_AgendaTareas.js",
+    "handler": "ER_AgendaTarea_CTS",
+    "perfil": "agenda"
+  },
+  {
+    "modulo": "agenda",
+    "method": "POST",
+    "path": "/api/agenda/tareas/:id/recordar",
+    "controller": "Agenda/CTS_TB_AgendaTareas.js",
+    "handler": "RECORDAR_AgendaTarea_CTS",
+    "perfil": "agenda"
+  },
+  {
+    "modulo": "agenda",
+    "method": "POST",
+    "path": "/api/agenda/dias/:fecha/notas",
+    "controller": "Agenda/CTS_TB_AgendaNotas.js",
+    "handler": "CR_AgendaNota_CTS",
+    "perfil": "agenda"
+  },
+  {
+    "modulo": "agenda",
+    "method": "PATCH",
+    "path": "/api/agenda/notas/:id",
+    "controller": "Agenda/CTS_TB_AgendaNotas.js",
+    "handler": "UR_AgendaNota_CTS",
+    "perfil": "agenda"
+  },
+  {
+    "modulo": "agenda",
+    "method": "DELETE",
+    "path": "/api/agenda/notas/:id",
+    "controller": "Agenda/CTS_TB_AgendaNotas.js",
+    "handler": "ER_AgendaNota_CTS",
+    "perfil": "agenda"
+  },
+  {
+    "modulo": "agenda",
+    "method": "PATCH",
+    "path": "/api/agenda/dias/:fecha/notas/orden",
+    "controller": "Agenda/CTS_TB_AgendaNotas.js",
+    "handler": "ORDENAR_AgendaNotas_CTS",
+    "perfil": "agenda"
+  },
+  {
+    "modulo": "agenda",
+    "method": "POST",
+    "path": "/api/agenda/tiempos",
+    "controller": "Agenda/CTS_TB_AgendaTiempoRegistros.js",
+    "handler": "INICIAR_AgendaTiempo_CTS",
+    "perfil": "agenda"
+  },
+  {
+    "modulo": "agenda",
+    "method": "POST",
+    "path": "/api/agenda/tiempos/:id/detener",
+    "controller": "Agenda/CTS_TB_AgendaTiempoRegistros.js",
+    "handler": "DETENER_AgendaTiempo_CTS",
+    "perfil": "agenda"
+  },
+  {
+    "modulo": "agenda",
+    "method": "DELETE",
+    "path": "/api/agenda/tiempos/:id",
+    "controller": "Agenda/CTS_TB_AgendaTiempoRegistros.js",
+    "handler": "ER_AgendaTiempo_CTS",
+    "perfil": "agenda"
+  },
+  {
+    "modulo": "agenda",
+    "method": "GET",
+    "path": "/api/admin/agenda/accesos/:usuario_id",
+    "controller": "Agenda/CTS_TB_AgendaAccesos.js",
+    "handler": "OBRS_AgendaAccesoUsuario_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "agenda",
+    "method": "PATCH",
+    "path": "/api/admin/agenda/accesos/:usuario_id",
+    "controller": "Agenda/CTS_TB_AgendaAccesos.js",
+    "handler": "UR_AgendaAccesoUsuario_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "agendaVenta",
+    "method": "GET",
+    "path": "/api/admin/agenda/venta",
+    "controller": "Agenda/CTS_AgendaVenta.js",
+    "handler": "OBRS_AgendaVenta_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "agendaVenta",
+    "method": "PATCH",
+    "path": "/api/admin/agenda/venta",
+    "controller": "Agenda/CTS_AgendaVenta.js",
+    "handler": "UR_AgendaVenta_CTS",
+    "perfil": "admin"
+  },
+  {
+    "modulo": "agendaCompras",
+    "method": "GET",
+    "path": "/api/agenda/venta",
+    "controller": "Agenda/CTS_AgendaCompras.js",
+    "handler": "OBRS_OfertaAgenda_CTS",
+    "perfil": "agenda"
+  },
+  {
+    "modulo": "agendaCompras",
+    "method": "POST",
+    "path": "/api/agenda/compras",
+    "controller": "Agenda/CTS_AgendaCompras.js",
+    "handler": "CR_CompraAgenda_CTS",
+    "perfil": "agenda"
+  },
+  {
+    "modulo": "agendaCompras",
+    "method": "GET",
+    "path": "/api/agenda/compras/:referencia",
+    "controller": "Agenda/CTS_AgendaCompras.js",
+    "handler": "OBRS_CompraAgenda_CTS",
+    "perfil": "agenda"
+  },
+  {
+    "modulo": "agendaCompras",
+    "method": "POST",
+    "path": "/api/agenda/compras/:referencia/mercadopago",
+    "controller": "Agenda/CTS_AgendaCompras.js",
+    "handler": "CR_PagoAgenda_CTS",
+    "perfil": "agenda"
+  },
+  {
+    "modulo": "agendaCompras",
+    "method": "POST",
+    "path": "/api/agenda/compras/:referencia/cancelar",
+    "controller": "Agenda/CTS_AgendaCompras.js",
+    "handler": "ER_CompraAgenda_CTS",
+    "perfil": "agenda"
+  },
+  {
+    "modulo": "agendaCompras",
+    "method": "POST",
+    "path": "/api/agenda/compras/:referencia/aplicar",
+    "controller": "Agenda/CTS_AgendaCompras.js",
+    "handler": "APLICAR_CompraAgenda_CTS",
+    "perfil": "agenda"
   }
 ]

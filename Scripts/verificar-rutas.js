@@ -1,4 +1,6 @@
+/* Benjamin Orellana - 24/10/2026 - Integración de compra y habilitación de Mi agenda. */
 import * as MP from '../src/Middlewares/mercadoPago.js';
+/* Benjamin Orellana - 21/10/2026 - Contrato de Agenda con acceso personal y gestión ADMIN. */
 /* Benjamin Orellana - 05/10/2026 - Contrato de rutas, cobertura y cadenas de permisos. */
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -50,8 +52,12 @@ try {
       assert.deepEqual(row.handlers.slice(0, 3), [Security.autenticar, Security.exigirPasswordActualizada,
         expected.perfil === 'admin' ? Security.soloAdmin : Security.soloAlumno], `Permiso incorrecto: ${key}`);
     }
+    if (expected.perfil === 'agenda') {
+      assert.deepEqual(row.handlers.slice(0, 2), [Security.autenticar, Security.exigirPasswordActualizada], `Sesión Agenda incorrecta: ${key}`);
+      assert.equal(row.handlers.length, ['GET', 'HEAD'].includes(row.method) ? 3 : 4, `Cadena Agenda incorrecta: ${key}`);
+    }
     if (!['GET', 'HEAD'].includes(row.method) && expected.handler !== 'CR_Archivo_CTS') {
-      assert.ok(row.handlers.includes(expected.perfil === 'admin' ? Http.jsonGestion
+      assert.ok(row.handlers.includes(expected.modulo === 'agenda' ? Http.jsonAgenda : expected.perfil === 'admin' ? Http.jsonGestion
         : expected.perfil === 'alumno' ? Http.jsonCampus : Http.jsonAuth), `Falta JSON: ${key}`);
     }
     if (expected.handler === 'CR_Archivo_CTS') assert.equal(row.handlers.length, 4, 'Multipart no debe pasar por el parser JSON.');
@@ -65,12 +71,12 @@ try {
       if (typeof handler === 'function') { functions++; assert.ok(seen.has(handler), `${file}: ${name} no tiene ruta.`); }
     }
   }
-  assert.equal(functions, 104);
+  assert.equal(functions, 130);
   const app = crearApp();
   assert.equal(app.get('trust proxy'), process.env.TRUST_PROXY === 'loopback' ? 'loopback' : false);
   assert.equal(app.get('query parser'), 'simple');
   assert.equal(app.enabled('x-powered-by'), false);
-  console.log('Rutas y servidor OK: ' + JSON.stringify({ modulos: 19, rutas: actual.length, controladores: files.size, funciones: functions }));
+  console.log('Rutas y servidor OK: ' + JSON.stringify({ modulos: 22, rutas: actual.length, controladores: files.size, funciones: functions }));
   console.log('Verificación local terminada. No se abrió una conexión a MySQL.');
 } catch (error) { console.error(error.message); process.exitCode = 1; }
 finally { await db.close(); }

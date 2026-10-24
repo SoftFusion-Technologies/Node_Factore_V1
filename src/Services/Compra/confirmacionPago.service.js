@@ -2,7 +2,8 @@
 import db from '../../DataBase/db.js';
 import ComprasModel from '../../Models/Compra/MD_TB_Compras.js';
 import PagosModel from '../../Models/Compra/MD_TB_CompraPagos.js';
-import ItemsModel from '../../Models/Compra/MD_TB_CompraItems.js';
+import { itemsPagoCompra } from './itemsPago.service.js';
+import { entregarAgendaCompra } from '../Agenda/agendaCompra.service.js';
 import AuditoriaModel from '../../Models/Sistema/MD_TB_AuditoriaEventos.js';
 import { ahoraCompra } from './compra.service.js';
 import { fecha } from '../Pago/mercadoPago.service.js';
@@ -19,7 +20,7 @@ export async function confirmarPagoMP(pagoId,{referenciaEsperada}={}) {
   if(referenciaEsperada!==undefined)exigir(payment.referencia===referenciaEsperada,503,'MP_PAGO_NO_VERIFICADO','El pago consultado no corresponde a esta compra.');
   // Una cuenta puede tener otras integraciones. Ignorar pagos sin compra propia.
   if(typeof payment.referencia!=='string' || !uuid.test(payment.referencia))return {ignorada:true};
-  return db.transaction(async transaction=>{
+  const result = await db.transaction(async transaction=>{
     // Todos los intentos de una compra usan el mismo bloqueo, también si son pagos distintos.
     const compra=await ComprasModel.findOne({where:{referencia:payment.referencia},transaction,lock:transaction.LOCK.UPDATE});
     if(!compra)return {ignorada:true};
@@ -38,7 +39,7 @@ export async function confirmarPagoMP(pagoId,{referenciaEsperada}={}) {
     else if(cents(payment.importe_reintegrado)>0n || ['refunded','charged_back','in_mediation'].includes(payment.estado))reason='MP_REINTEGRO_O_DISPUTA';
     else if(!['approved','pending','in_process','authorized','rejected','cancelled'].includes(payment.estado))reason='MP_ESTADO_NO_ADMITIDO';
     if(!reason && payment.estado==='approved') {
-      const items=await ItemsModel.findAll({where:{compra_id:compra.id},transaction});
+      const items=await itemsPagoCompra(compra,transaction);
       if(!items.length || items.some(item=>item.moneda!==compra.moneda) || items.reduce((sum,item)=>sum+cents(item.precio_unitario),0n)!==cents(compra.total))reason='COMPRA_IMPORTE_INVALIDO';
       else if(payment.detalle_estado!=='accredited' || !payment.aprobado_en)reason='MP_APROBACION_NO_ACREDITADA';
       else if(payment.aprobado_en<fecha(compra.creado_en) || payment.aprobado_en>=fecha(compra.vence_en))reason='MP_PAGO_FUERA_PLAZO';
@@ -69,4 +70,7 @@ export async function confirmarPagoMP(pagoId,{referenciaEsperada}={}) {
     }
     return {registrada:true};
   });
+  // Benjamin Orellana - 24/10/2026 - Un replay también recupera una entrega interrumpida.
+  await entregarAgendaCompra(payment.referencia);
+  return result;
 }

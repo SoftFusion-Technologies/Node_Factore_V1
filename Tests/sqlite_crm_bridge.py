@@ -33,9 +33,15 @@ db = sqlite3.connect(':memory:', isolation_level=None)
 db.row_factory = sqlite3.Row
 db.execute('PRAGMA foreign_keys=ON')
 db.create_function('UTC_TIMESTAMP', 1, utc)
-fixture = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else 'crm.sqlite.sql')
-if fixture.name != str(fixture): raise ValueError('Fixture fuera de la carpeta de pruebas')
-db.executescript((pathlib.Path(__file__).parent/'fixtures'/fixture).read_text())
+# Benjamin Orellana - 20/10/2026 - Hora y fixtures de Agenda en memoria.
+db.create_function('SECOND', 1, lambda value: int(str(value).split(':')[2].split('.')[0]))
+db.create_function('CHAR_LENGTH', 1, lambda value: None if value is None else len(value))
+for name in (sys.argv[1:] or ['crm.sqlite.sql']):
+    fixture = pathlib.Path(name)
+    if fixture.name != str(fixture): raise ValueError('Fixture fuera de la carpeta de pruebas')
+    db.executescript((pathlib.Path(__file__).parent/'fixtures'/fixture).read_text())
+# Benjamin Orellana - 24/10/2026 - Tabla financiera vacía para todas las suites de compras.
+db.executescript((pathlib.Path(__file__).parent/'fixtures'/'agenda-compras.sqlite.sql').read_text())
 print(json.dumps({'ready':True}), flush=True)
 for line in sys.stdin:
     req = {}
@@ -53,7 +59,7 @@ for line in sys.stdin:
                     obj = dict(row)
                     for field, value in list(obj.items()):
                         key = field.split('.')[-1]
-                        if value is not None and (key == 'id' or key.endswith('_id') or key in ('creado_por','subido_por','asignado_por','realizado_por','solicitado_por')):
+                        if value is not None and (key == 'id' or key.endswith('_id') or key in ('creado_por','subido_por','asignado_por','realizado_por','solicitado_por','otorgado_por')):
                             obj[field] = str(value)
                         elif key in ('detalle','datos_antes','datos_despues') and isinstance(value, str): obj[field] = json.loads(value)
                         elif key == 'tamanio_bytes' and value is not None: obj[field] = str(value)

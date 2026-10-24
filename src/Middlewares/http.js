@@ -53,6 +53,19 @@ export const jsonGestion = jsonConLimite('1mb');
 export const jsonAuth = jsonConLimite('16kb');
 export const jsonCampus = jsonConLimite('16kb');
 
+// Benjamin Orellana - 21/10/2026 - Agenda exige origen antes de leer el cuerpo.
+// El límite de 1 MB admite reordenar listas completas de notas sin un corte en 100.
+const parserAgenda = jsonConLimite('1mb');
+export function jsonAgenda(req, res, next) {
+  try {
+    if (typeof req.headers.origin !== 'string') {
+      throw new ErrorHttp(403, 'ORIGEN_REQUERIDO', 'La escritura requiere un origen permitido.');
+    }
+    verificarOrigen(req);
+  } catch (error) { return responderError(error, res); }
+  return parserAgenda(req, res, next);
+}
+
 export function rutaNoEncontrada(req, res) {
   return responderError(new ErrorHttp(404, 'RUTA_NO_ENCONTRADA', 'Ruta no encontrada.'), res);
 }

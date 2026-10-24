@@ -253,3 +253,61 @@ PATCH /api/admin/comercios/:id/logo · ADMIN con cookie y CSRF. Cuerpo exclusivo
 ## Seguimiento administrativo
 
 GET `/api/admin/seguimiento` devuelve `{ data, meta, resumen, consultado_en }`. GET `/api/admin/seguimiento/:id` devuelve `{ data, lecciones, meta, consultado_en }`. Exclusivo de ADMIN; consultas de lectura y sin cambios de permisos/progreso. El ID del detalle es el de la asignación. Filtros y criterios completos en `docs/SEGUIMIENTO.md`.
+
+
+## Mi agenda · 21/10/2026
+
+Benjamin Orellana · Rutas autenticadas de Agenda y permisos individuales.
+
+Las rutas `/api/agenda` admiten cuentas ADMIN y ALUMNO con contraseña actualizada.
+El rol no habilita Agenda: salvo consultar el estado propio, todas exigen un permiso
+individual ACTIVO dentro de su ventana. La gestión `/api/admin/agenda` exige ADMIN.
+Las escrituras agregan origen permitido, CSRF y parser JSON de hasta 1 MB.
+
+| Método | Path | Handler |
+| --- | --- | --- |
+| GET | `/api/agenda/estado` | `OBRS_EstadoMiAgenda_CTS` |
+| GET | `/api/agenda/mes` | `OBRS_MiAgendaMes_CTS` |
+| GET | `/api/agenda/dias/:fecha` | `OBRS_MiAgendaDia_CTS` |
+| PATCH | `/api/agenda/dias/:fecha` | `UR_MiAgendaDia_CTS` |
+| PATCH | `/api/agenda/preferencias` | `UR_MisPreferenciasAgenda_CTS` |
+| POST | `/api/agenda/dias/:fecha/tareas` | `CR_AgendaTarea_CTS` |
+| PATCH | `/api/agenda/tareas/:id` | `UR_AgendaTarea_CTS` |
+| DELETE | `/api/agenda/tareas/:id` | `ER_AgendaTarea_CTS` |
+| POST | `/api/agenda/tareas/:id/recordar` | `RECORDAR_AgendaTarea_CTS` |
+| POST | `/api/agenda/dias/:fecha/notas` | `CR_AgendaNota_CTS` |
+| PATCH | `/api/agenda/notas/:id` | `UR_AgendaNota_CTS` |
+| DELETE | `/api/agenda/notas/:id` | `ER_AgendaNota_CTS` |
+| PATCH | `/api/agenda/dias/:fecha/notas/orden` | `ORDENAR_AgendaNotas_CTS` |
+| POST | `/api/agenda/tiempos` | `INICIAR_AgendaTiempo_CTS` |
+| POST | `/api/agenda/tiempos/:id/detener` | `DETENER_AgendaTiempo_CTS` |
+| DELETE | `/api/agenda/tiempos/:id` | `ER_AgendaTiempo_CTS` |
+| GET | `/api/admin/agenda/accesos/:usuario_id` | `OBRS_AgendaAccesoUsuario_CTS` |
+| PATCH | `/api/admin/agenda/accesos/:usuario_id` | `UR_AgendaAccesoUsuario_CTS` |
+
+Mes requiere `?mes=AAAA-MM`; día usa fecha `AAAA-MM-DD` de Argentina.
+Las ediciones/eliminaciones requieren la versión leída. Primera escritura de un día,
+preferencia o permiso todavía inexistente usa `version: 0`. Los cuerpos y respuestas
+están detallados en `AGENDA_ETAPA2.md`. Las notas se ordenan con la lista completa
+de `{id, version}`. No enviar usuario_id en las operaciones personales.
+
+La instalación y la prueba autenticada de solo lectura están en `AGENDA_ETAPA3.md`.
+No se configura precio ni se vinculan pagos en esta etapa.
+
+## Configuración comercial de Mi agenda · 22/10/2026
+
+`GET /api/admin/agenda/venta` y `PATCH /api/admin/agenda/venta` requieren sesión ADMIN con contraseña actualizada. El PATCH exige origen permitido, CSRF y versión vigente; permite precio en ARS, duración y preparación comercial. No modifica accesos individuales. Ver `AGENDA_ETAPA5_CONFIGURACION.md`.
+
+
+## Compra autenticada de Mi agenda · 24/10/2026
+
+Sesión de portal y contraseña actualizada en todas las rutas. Escrituras con CSRF y origen. La referencia se filtra por la cuenta autenticada.
+
+- `GET /api/agenda/venta`
+- `POST /api/agenda/compras`
+- `GET /api/agenda/compras/:referencia`
+- `POST /api/agenda/compras/:referencia/mercadopago`
+- `POST /api/agenda/compras/:referencia/cancelar`
+- `POST /api/agenda/compras/:referencia/aplicar`
+
+Ver `AGENDA_ETAPA6_PAGOS.md` para instalación, reglas de entrega y validación SQL.

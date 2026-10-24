@@ -1,4 +1,6 @@
 import { initCompraRelaciones } from './Compra/relacionesCompra.js';
+/* Benjamin Orellana - 20/10/2026 - Incorporar relaciones y propiedad de Mi agenda. */
+import { initAgendaRelaciones } from './Agenda/relacionesAgenda.js';
 /* Benjamin Orellana - 04/10/2026 - Inicialización central de relaciones Factor E. */
 
 import { initClienteRelaciones } from './Cliente/relacionesCliente.js';
@@ -20,12 +22,20 @@ export function initRelaciones() {
   initCampusRelaciones();
   initSistemaRelaciones();
   initCompraRelaciones();
+  initAgendaRelaciones();
 }
 
 // Sequelize resuelve estas asociaciones por id, único en cada tabla.
-// MySQL conserva y exige también curso_id en las cinco FK compuestas.
+// MySQL exige también curso_id en contenido y usuario_id en días de agenda.
 // Este registro es informativo y se usa para verificar; no ejecuta DDL.
 export const clavesForaneasCompuestas = [
+  ...['agenda_tareas', 'agenda_notas', 'agenda_tiempo_registros'].map(table => ({
+    table,
+    fields: ['dia_id', 'usuario_id'],
+    target: 'agenda_dias',
+    targetFields: ['id', 'usuario_id'],
+    onDelete: 'RESTRICT'
+  })),
   {
     "table": "curso_lecciones",
     "fields": [

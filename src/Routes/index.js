@@ -1,3 +1,5 @@
+/* Benjamin Orellana - 24/10/2026 - Integración de compra y habilitación de Mi agenda. */
+import agendaComprasRoutes from './agendaCompras.routes.js';
 import mercadoPagoRoutes from './mercadoPago.routes.js';
 import checkoutRoutes from './checkout.routes.js';
 /* Benjamin Orellana - 05/10/2026 - Orquestador de rutas de Factor E. */
@@ -20,6 +22,10 @@ import campusRoutes from './campus.routes.js';
 import catalogoRoutes from './catalogo.routes.js';
 // Benjamin Orellana - 19/10/2026 - Consultas privadas de compras.
 import comprasRoutes from './compras.routes.js';
+// Benjamin Orellana - 21/10/2026 - Incorporar las rutas de Mi agenda.
+// Benjamin Orellana - 22/10/2026 - Configuración comercial administrativa.
+import agendaVentaRoutes from './agendaVenta.routes.js';
+import agendaRoutes from './agenda.routes.js';
 
 const router = express.Router({ caseSensitive: true, strict: true });
 router.use(healthRoutes);
@@ -41,5 +47,8 @@ router.use(catalogoRoutes);
 router.use(checkoutRoutes);
 router.use(mercadoPagoRoutes);
 router.use(comprasRoutes);
+router.use(agendaRoutes);
+router.use(agendaVentaRoutes);
+router.use(agendaComprasRoutes);
 
 export default router;

@@ -1,3 +1,4 @@
+/* Benjamin Orellana - 24/10/2026 - Integración de compra y habilitación de Mi agenda. */
 /* Benjamin Orellana - 19/10/2026 - Consultas administrativas de compras; nunca generan cobros ni accesos. */
 import { Op, literal, where as comparar } from 'sequelize';
 import db from '../../DataBase/db.js';
@@ -24,6 +25,8 @@ const revisionSQL = `EXISTS(SELECT 1 FROM compra_pagos p WHERE p.compra_id=compr
 const estadoSQL = `CASE WHEN compras.estado='PENDIENTE' AND compras.vence_en<=UTC_TIMESTAMP(3)
   THEN 'VENCIDA' ELSE compras.estado END`;
 const entregaSQL = `CASE
+  WHEN EXISTS(SELECT 1 FROM agenda_compras ac WHERE ac.compra_id=compras.id) AND compras.estado<>'PAGADA' THEN 'NO_CORRESPONDE'
+  WHEN EXISTS(SELECT 1 FROM agenda_compras ac WHERE ac.compra_id=compras.id AND ac.entregada_en IS NULL) AND compras.estado='PAGADA' THEN 'PENDIENTE' 
   WHEN compras.usuario_id IS NOT NULL AND compras.estado='PAGADA' AND ${entregasSQL}=1 AND ${comprobantesSQL}=1 THEN 'ENTREGADA'
   WHEN compras.usuario_id IS NOT NULL OR ${entregasSQL}>0 THEN 'REVISION'
   WHEN compras.estado='PAGADA' THEN 'PENDIENTE' ELSE 'NO_CORRESPONDE' END`;
@@ -69,6 +72,8 @@ export async function listadoCompras(query) {
   const ids = result.data.map(row => row.id);
   const items = ids.length ? await m.compra_items.findAll({ attributes: camposItem,
     where: { compra_id: { [Op.in]: ids } }, order: [['compra_id', 'ASC'], ['id', 'ASC']] }) : [];
+  const agendas = ids.length ? await m.agenda_compras.findAll({ where: { compra_id: { [Op.in]: ids } } }) : [];
+  for (const item of agendas) items.push({ ...item.get({ plain: true }), tipo: 'AGENDA', titulo: 'Mi agenda', curso_id: null });
   const porCompra = new Map();
   for (const item of items) {
     const key = String(item.compra_id);
@@ -102,11 +107,20 @@ export async function detalleCompra(value, query = {}) {
     tiene_excepciones: conExcepciones.has(String(acceso.id)),
     requiere_revision_para_asignar: acceso.estado !== 'ACTIVO' || acceso.alcance !== 'COMPLETO' || conExcepciones.has(String(acceso.id))
   }]));
+  const detalles = items.map(item => ({ ...item.get({ plain: true }), acceso_actual: porCurso.get(String(item.curso_id)) || null }));
+  const agenda = await m.agenda_compras.findOne({ where: { compra_id: compra.id } });
+  if (agenda) {
+    const accesoAgenda = await m.agenda_accesos.findOne({ where: { usuario_id: agenda.usuario_id } });
+    const detalle = { ...agenda.get({ plain: true }), tipo: 'AGENDA', titulo: 'Mi agenda', curso_id: null,
+      acceso_actual: accesoAgenda ? { ...accesoAgenda.get({ plain: true }), estado_temporal: estadoTemporal(accesoAgenda, ahora),
+        requiere_revision_para_asignar: accesoAgenda.estado !== 'ACTIVO' } : null };
+    detalles.push(detalle);
+  }
   const pagos = await m.compra_pagos.findAll({ attributes: camposPago,
     where: { compra_id: compra.id }, order: [['id', 'ASC']] });
   const eventos = await m.auditoria_eventos.findAll({ attributes: ['id', 'usuario_id', 'accion', 'creado_en'],
     where: { entidad: 'compras', entidad_id: compra.id }, order: [['id', 'ASC']] });
   return { data: { ...data, cuenta_por_email: candidata, cliente,
-    items: items.map(item => ({ ...item.get({ plain: true }), acceso_actual: porCurso.get(String(item.curso_id)) || null })),
+    items: detalles,
     pagos, eventos } };
 }
