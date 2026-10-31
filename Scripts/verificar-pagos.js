@@ -1,3 +1,4 @@
+/* Benjamin Orellana - 24/10/2026 - Configuración y registro de certificados de curso. */
 /* Benjamin Orellana - 24/10/2026 - Integración de compra y habilitación de Mi agenda. */
 /* Benjamin Orellana - 22/10/2026 - Catálogo actualizado con la configuración comercial de Agenda. */
 /* Benjamin Orellana - 20/10/2026 - Verificación compatible con modelos de Agenda. */
@@ -11,7 +12,7 @@ import { verificarFirmaWebhook } from '../src/Services/Pago/firmaWebhook.service
 import { consultarPagoMP } from '../src/Services/Pago/consultaPago.service.js';
 try {
   initRelaciones();
-  assert.equal(Object.keys(modelos).length,29);
+  assert.equal(Object.keys(modelos).length,30);
   assert.ok(modelos.compras.associations.pagos);
   assert.ok(modelos.compra_pagos.associations.compra);
   assert.equal(modelos.compra_pagos.options.indexes.find(row=>row.name==='uq_compra_pagos_mp').unique,true);

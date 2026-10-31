@@ -1109,5 +1109,37 @@
     "controller": "Agenda/CTS_AgendaCompras.js",
     "handler": "APLICAR_CompraAgenda_CTS",
     "perfil": "agenda"
+  },
+  {
+    "modulo": "campus",
+    "method": "GET",
+    "path": "/api/campus/cursos/:curso_id/certificado",
+    "perfil": "alumno",
+    "controller": "Certificado/CTS_CampusCertificados.js",
+    "handler": "OBRS_MiCertificado_CTS"
+  },
+  {
+    "modulo": "campus",
+    "method": "POST",
+    "path": "/api/campus/cursos/:curso_id/certificado",
+    "perfil": "alumno",
+    "controller": "Certificado/CTS_CampusCertificados.js",
+    "handler": "CR_MiCertificado_CTS"
+  },
+  {
+    "modulo": "campus",
+    "method": "HEAD",
+    "path": "/api/campus/cursos/:curso_id/certificado/pdf",
+    "perfil": "alumno",
+    "controller": "Certificado/CTS_CampusCertificados.js",
+    "handler": "OBRS_PdfMiCertificado_CTS"
+  },
+  {
+    "modulo": "campus",
+    "method": "GET",
+    "path": "/api/campus/cursos/:curso_id/certificado/pdf",
+    "perfil": "alumno",
+    "controller": "Certificado/CTS_CampusCertificados.js",
+    "handler": "OBRS_PdfMiCertificado_CTS"
   }
 ]

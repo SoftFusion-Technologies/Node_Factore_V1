@@ -1,3 +1,5 @@
+/* Benjamin Orellana - 24/10/2026 - Configuración y registro de certificados de curso. */
+import { initCertificadoRelaciones } from './Certificado/relacionesCertificado.js';
 import { initCompraRelaciones } from './Compra/relacionesCompra.js';
 /* Benjamin Orellana - 20/10/2026 - Incorporar relaciones y propiedad de Mi agenda. */
 import { initAgendaRelaciones } from './Agenda/relacionesAgenda.js';
@@ -23,6 +25,7 @@ export function initRelaciones() {
   initSistemaRelaciones();
   initCompraRelaciones();
   initAgendaRelaciones();
+  initCertificadoRelaciones();
 }
 
 // Sequelize resuelve estas asociaciones por id, único en cada tabla.

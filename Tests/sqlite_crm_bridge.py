@@ -42,6 +42,10 @@ for name in (sys.argv[1:] or ['crm.sqlite.sql']):
     db.executescript((pathlib.Path(__file__).parent/'fixtures'/fixture).read_text())
 # Benjamin Orellana - 24/10/2026 - Tabla financiera vacía para todas las suites de compras.
 db.executescript((pathlib.Path(__file__).parent/'fixtures'/'agenda-compras.sqlite.sql').read_text())
+# Benjamin Orellana - 24/10/2026 - Configuración de diploma y registro vacío; no emite certificados.
+if db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='cursos'").fetchone():
+    db.executescript((pathlib.Path(__file__).parent/'fixtures'/'certificados-cursos.sqlite.sql').read_text())
+db.executescript((pathlib.Path(__file__).parent/'fixtures'/'certificados.sqlite.sql').read_text())
 print(json.dumps({'ready':True}), flush=True)
 for line in sys.stdin:
     req = {}
@@ -63,7 +67,7 @@ for line in sys.stdin:
                             obj[field] = str(value)
                         elif key in ('detalle','datos_antes','datos_despues') and isinstance(value, str): obj[field] = json.loads(value)
                         elif key == 'tamanio_bytes' and value is not None: obj[field] = str(value)
-                        elif key in ('precio','total','precio_unitario','importe','importe_reintegrado') and value is not None: obj[field] = format(value, '.2f')
+                        elif key in ('precio','total','precio_unitario','importe','importe_reintegrado','certificado_carga_horaria','carga_horaria') and value is not None: obj[field] = format(value, '.2f')
                     result.append(obj)
             else:
                 result = {'insertId':str(cur.lastrowid),'affectedRows':max(cur.rowcount,0)}

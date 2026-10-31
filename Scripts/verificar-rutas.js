@@ -1,3 +1,4 @@
+/* Benjamin Orellana - 30/10/2026 - Incorporar cuatro rutas y tres controladores de diploma privado. */
 /* Benjamin Orellana - 24/10/2026 - Integración de compra y habilitación de Mi agenda. */
 import * as MP from '../src/Middlewares/mercadoPago.js';
 /* Benjamin Orellana - 21/10/2026 - Contrato de Agenda con acceso personal y gestión ADMIN. */
@@ -71,7 +72,7 @@ try {
       if (typeof handler === 'function') { functions++; assert.ok(seen.has(handler), `${file}: ${name} no tiene ruta.`); }
     }
   }
-  assert.equal(functions, 130);
+  assert.equal(functions, 133);
   const app = crearApp();
   assert.equal(app.get('trust proxy'), process.env.TRUST_PROXY === 'loopback' ? 'loopback' : false);
   assert.equal(app.get('query parser'), 'simple');

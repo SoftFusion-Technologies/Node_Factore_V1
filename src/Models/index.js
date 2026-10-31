@@ -1,3 +1,5 @@
+/* Benjamin Orellana - 24/10/2026 - Configuración y registro de certificados de curso. */
+import CursoCertificadosModel from './Certificado/MD_TB_CursoCertificados.js';
 /* Benjamin Orellana - 24/10/2026 - Integración de compra y habilitación de Mi agenda. */
 import AgendaComprasModel from './Agenda/MD_TB_AgendaCompras.js';
 /* Benjamin Orellana - 22/10/2026 - Configuración comercial de Mi agenda. */
@@ -34,6 +36,7 @@ import AuditoriaEventosModel from './Sistema/MD_TB_AuditoriaEventos.js';
 import ArchivosEliminacionesModel from './Archivo/MD_TB_ArchivosEliminaciones.js';
 
 export {
+  CursoCertificadosModel,
   AgendaVentaConfiguracionModel,
   AgendaAccesosModel, AgendaPreferenciasModel, AgendaDiasModel,
   AgendaTareasModel, AgendaNotasModel, AgendaTiempoRegistrosModel,
@@ -59,6 +62,7 @@ export {
 };
 
 export const modelos = {
+  curso_certificados: CursoCertificadosModel,
   agenda_compras: AgendaComprasModel,
   agenda_venta_configuracion: AgendaVentaConfiguracionModel,
   agenda_accesos: AgendaAccesosModel,

@@ -1,3 +1,5 @@
+/* Benjamin Orellana - 30/10/2026 - Certificados privados del alumno, emisión con CSRF y descarga sin IDs libres. */
+import { OBRS_MiCertificado_CTS, CR_MiCertificado_CTS, OBRS_PdfMiCertificado_CTS } from '../Controllers/Certificado/CTS_CampusCertificados.js';
 /*
  * Programador: Benjamin Orellana
  * Fecha Creación: 05 / 10 / 2026
@@ -19,6 +21,11 @@ import { limitarCheckout } from '../Middlewares/checkout.js';
 const router = express.Router({ caseSensitive: true, strict: true });
 
 router.post('/api/campus/compras/:referencia/vincular', autenticar, exigirPasswordActualizada, soloAlumno, limitarCheckout, jsonCampus, VINCULAR_Compra_CTS);
+
+router.get('/api/campus/cursos/:curso_id/certificado', autenticar, exigirPasswordActualizada, soloAlumno, OBRS_MiCertificado_CTS);
+router.post('/api/campus/cursos/:curso_id/certificado', autenticar, exigirPasswordActualizada, soloAlumno, jsonCampus, CR_MiCertificado_CTS);
+router.head('/api/campus/cursos/:curso_id/certificado/pdf', autenticar, exigirPasswordActualizada, soloAlumno, OBRS_PdfMiCertificado_CTS);
+router.get('/api/campus/cursos/:curso_id/certificado/pdf', autenticar, exigirPasswordActualizada, soloAlumno, OBRS_PdfMiCertificado_CTS);
 
 router.get('/api/campus/cursos', autenticar, exigirPasswordActualizada, soloAlumno, OBRS_MisCursos_CTS);
 router.get('/api/campus/cursos/:curso_id', autenticar, exigirPasswordActualizada, soloAlumno, OBRS_DetMiCurso_CTS);

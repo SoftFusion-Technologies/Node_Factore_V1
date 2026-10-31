@@ -311,3 +311,17 @@ Sesión de portal y contraseña actualizada en todas las rutas. Escrituras con C
 - `POST /api/agenda/compras/:referencia/aplicar`
 
 Ver `AGENDA_ETAPA6_PAGOS.md` para instalación, reglas de entrega y validación SQL.
+
+
+### Certificados propios del campus (30/10/2026)
+
+Benjamin Orellana - Estado y diploma del alumno autenticado. Las cuatro rutas exigen autenticar, contraseña actualizada y rol ALUMNO. El POST requiere JSON vacío, origen permitido y CSRF.
+
+| Método | Path | Handler |
+|---|---|---|
+| GET | `/api/campus/cursos/:curso_id/certificado` | `OBRS_MiCertificado_CTS` |
+| POST | `/api/campus/cursos/:curso_id/certificado` | `CR_MiCertificado_CTS` |
+| HEAD | `/api/campus/cursos/:curso_id/certificado/pdf` | `OBRS_PdfMiCertificado_CTS` |
+| GET | `/api/campus/cursos/:curso_id/certificado/pdf` | `OBRS_PdfMiCertificado_CTS` |
+
+GET informa `DESHABILITADO`, `PENDIENTE`, `LISTO`, `EMITIDO` o el motivo de restricción. POST retorna 201 en la primera emisión y 200 al repetirla; no acepta nombre, fecha, usuario ni carga horaria. PDF usa `application/pdf`, `Cache-Control: private, no-store` y descarga con nombre fijo. Detalle de reglas y validación en CERTIFICADOS_ETAPA2.md.

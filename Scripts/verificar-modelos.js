@@ -1,3 +1,4 @@
+/* Benjamin Orellana - 24/10/2026 - Configuración y registro de certificados de curso. */
 /* Benjamin Orellana - 24/10/2026 - Integración de compra y habilitación de Mi agenda. */
 /* Benjamin Orellana - 22/10/2026 - Catálogo actualizado con la configuración comercial de Agenda. */
 /* Benjamin Orellana - 20/10/2026 - Verificación compatible con modelos de Agenda. */
@@ -23,7 +24,7 @@ function normalizarTipo(value) {
 }
 
 function verificarLocales() {
-  assert.equal(Object.keys(modelos).length, 29, 'Se esperan 29 modelos.');
+  assert.equal(Object.keys(modelos).length, 30, 'Se esperan 30 modelos.');
   const camposAntes = Object.fromEntries(Object.entries(modelos).map(([table, model]) =>
     [table, Object.keys(model.rawAttributes)]));
   initRelaciones();
@@ -49,13 +50,13 @@ function verificarLocales() {
       }
     }
   }
-  assert.equal(campos, 319, 'La estructura instalada contiene 319 columnas.');
-  assert.equal(relaciones, 104, 'Se esperan 104 asociaciones, incluidas las inversas y comerciales.');
+  assert.equal(campos, 331, 'La estructura instalada contiene 331 columnas.');
+  assert.equal(relaciones, 108, 'Se esperan 108 asociaciones, incluidas las inversas y comerciales.');
   for (const [table, secret] of [['compras','token_hash'],['usuarios','password_hash'],['usuarios_sesiones','token_hash'],['usuarios_tokens','token_hash']]) {
     assert.ok(modelos[table].options.defaultScope.attributes.exclude.includes(secret));
     assert.deepEqual(modelos[table].scope('conHash')._scope.attributes.exclude, []);
   }
-  return { modelos: 29, campos, asociaciones: relaciones };
+  return { modelos: 30, campos, asociaciones: relaciones };
 }
 
 async function verificarMySQL() {
@@ -121,16 +122,16 @@ async function verificarMySQL() {
     }
   }
   const serializar = key => JSON.stringify([key.table,key.fields,key.target,key.targetFields,key.onDelete]);
-  assert.equal(expectedFK.length, 45);
-  assert.deepEqual([...grouped.values()].map(serializar).sort(), expectedFK.map(serializar).sort(), 'Las 45 claves foráneas no coinciden.');
+  assert.equal(expectedFK.length, 47);
+  assert.deepEqual([...grouped.values()].map(serializar).sort(), expectedFK.map(serializar).sort(), 'Las 47 claves foráneas no coinciden.');
   const checks = await select(`SELECT TABLE_NAME,CONSTRAINT_NAME,ENFORCED FROM information_schema.TABLE_CONSTRAINTS
     WHERE CONSTRAINT_SCHEMA=:schema AND CONSTRAINT_TYPE='CHECK'`, schema);
   const ownChecks = checks.filter(c => modelos[c.TABLE_NAME]);
-  assert.equal(ownChecks.length, 65, 'Se esperan 65 CHECK en las tablas de Factor E.');
+  assert.equal(ownChecks.length, 73, 'Se esperan 73 CHECK en las tablas de Factor E.');
   assert.ok(ownChecks.every(c => c.ENFORCED === 'YES'), 'Hay CHECK no efectivos.');
   const unique = statistics.filter(row => modelos[row.TABLE_NAME] && row.INDEX_NAME !== 'PRIMARY' && Number(row.NON_UNIQUE) === 0);
-  assert.equal(new Set(unique.map(row => `${row.TABLE_NAME}.${row.INDEX_NAME}`)).size, 25, 'Se esperan 25 índices únicos.');
-  return {...motor, vistas:4, claves_foraneas:45, claves_compuestas:8, checks:65, indices_unicos:25};
+  assert.equal(new Set(unique.map(row => `${row.TABLE_NAME}.${row.INDEX_NAME}`)).size, 26, 'Se esperan 26 índices únicos.');
+  return {...motor, vistas:4, claves_foraneas:47, claves_compuestas:8, checks:73, indices_unicos:26};
 }
 
 try {

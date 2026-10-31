@@ -1,3 +1,4 @@
+/* Benjamin Orellana - 24/10/2026 - Configuración y registro de certificados de curso. */
 /*
  * Programador: Benjamin Orellana
  * Fecha Creación: 04 / 10 / 2026
@@ -86,6 +87,10 @@ const CursosModel = db.define(
     venta_online_habilitada: { type: DataTypes.TINYINT.UNSIGNED, allowNull: false, defaultValue: 0 },
     acceso_duracion_cantidad: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false, defaultValue: 1 },
     acceso_duracion_unidad: { type: DataTypes.ENUM('DIAS','MESES'), allowNull: false, defaultValue: 'MESES' },
+
+    // Benjamin Orellana - 24/10/2026 - Configuración del diploma, independiente del acceso comprado.
+    certificado_carga_horaria: { type: DataTypes.DECIMAL(6,2), allowNull: true },
+    certificado_habilitado: { type: DataTypes.TINYINT.UNSIGNED, allowNull: false, defaultValue: 0 },
 
     creado_por: {
       type: DataTypes.BIGINT.UNSIGNED,

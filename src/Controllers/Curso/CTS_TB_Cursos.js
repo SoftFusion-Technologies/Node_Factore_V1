@@ -1,3 +1,5 @@
+/* Benjamin Orellana - 24/10/2026 - Configuración y registro de certificados de curso. */
+import { cargaHorariaCertificado, validarConfiguracionCertificado } from '../../Services/Certificado/configuracionCertificado.service.js';
 /* Benjamin Orellana - 04/10/2026 - Gestión administrativa de cursos de Factor E. */
 import { Op } from 'sequelize';
 import CursosModel from '../../Models/Curso/MD_TB_Cursos.js';
@@ -10,7 +12,7 @@ import { consulta, busqueda, listar } from '../../utils/listados.utils.js';
 import { precio, conContenido } from '../../Services/Curso/contenido.service.js';
 import { atributosArchivo, bloquearArchivos, validarArchivo, encolarSinReferencias } from '../../Services/Archivo/archivoReferencias.service.js';
 
-const campos = ['titulo','slug','descripcion_corta','descripcion','portada_archivo_id','precio','moneda','modalidad','estado','visible_catalogo','orden','venta_online_habilitada','acceso_duracion_cantidad','acceso_duracion_unidad'];
+const campos = ['titulo','slug','descripcion_corta','descripcion','portada_archivo_id','precio','moneda','modalidad','estado','visible_catalogo','orden','venta_online_habilitada','acceso_duracion_cantidad','acceso_duracion_unidad','certificado_carga_horaria','certificado_habilitado'];
 const estados = ['BORRADOR','PUBLICADO','ARCHIVADO'];
 const modalidades = ['VIRTUAL','PRESENCIAL','MIXTA'];
 const portada = {model:ArchivosModel,as:'portada',attributes:atributosArchivo,required:false};
@@ -21,6 +23,7 @@ function validar(body, crear = false) {
     if (['titulo','descripcion_corta','descripcion'].includes(name)) data[name] = texto(value,name,name === 'titulo' ? 180 : name === 'descripcion_corta' ? 500 : 50000,{nullable:name !== 'titulo'});
     else if (name === 'slug') data.slug = slug(value);
     else if (name === 'portada_archivo_id') data[name] = value === null ? null : id(value,name);
+    else if (name === 'certificado_carga_horaria') data[name] = cargaHorariaCertificado(value);
     else if (name === 'precio') data.precio = precio(value);
     else if (name === 'moneda') {
       data.moneda = texto(value,name,3).toUpperCase();
@@ -29,13 +32,14 @@ function validar(body, crear = false) {
     else if (name === 'estado') data[name] = opcion(value,name,estados);
     else if (name === 'acceso_duracion_unidad') data[name] = opcion(value,name,['DIAS','MESES']);
     else if (name === 'acceso_duracion_cantidad') data[name] = entero(value,name);
-    else if (['visible_catalogo','venta_online_habilitada'].includes(name)) data[name] = bandera(value,name);
+    else if (['visible_catalogo','venta_online_habilitada','certificado_habilitado'].includes(name)) data[name] = bandera(value,name);
     else data.orden = entero(value,name);
   }
   if (crear && data.slug === undefined) data.slug = slugDesdeNombre(data.titulo);
   return data;
 }
 function validarPolitica(data, row = {}) {
+  validarConfiguracionCertificado(data, row);
   const cantidad = data.acceso_duracion_cantidad ?? row.acceso_duracion_cantidad ?? 1;
   const unidad = data.acceso_duracion_unidad ?? row.acceso_duracion_unidad ?? 'MESES';
   exigir(cantidad >= 1 && cantidad <= (unidad === 'MESES' ? 120 : 3650),422,'DATOS_INVALIDOS','Duración: de 1 a 120 meses o de 1 a 3650 días.');

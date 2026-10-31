@@ -1,3 +1,4 @@
+/* Benjamin Orellana - 24/10/2026 - Configuración y registro de certificados de curso. */
 /* Benjamin Orellana - 24/10/2026 - Integración de compra y habilitación de Mi agenda. */
 import * as ComprasAgenda from '../src/Controllers/Agenda/CTS_AgendaCompras.js';
 /* Benjamin Orellana - 22/10/2026 - Catálogo actualizado con la configuración comercial de Agenda. */
@@ -27,9 +28,9 @@ try {
     assert.deepEqual(Object.keys(modulo).sort(), [...nombres].sort());
     for (const nombre of nombres) assert.equal(typeof modulo[nombre], 'function');
   }
-  assert.equal(Object.keys(modelos).length, 29);
+  assert.equal(Object.keys(modelos).length, 30);
   console.log('Controladores Agenda OK:', JSON.stringify({ controladores: 7,
-    funciones: contratos.reduce((n, [, nombres]) => n + nombres.length, 0), servicios: 7, modelos: 29 }));
+    funciones: contratos.reduce((n, [, nombres]) => n + nombres.length, 0), servicios: 7, modelos: 30 }));
   // Benjamin Orellana - 21/10/2026 - Mensaje vigente al conectar las rutas de Agenda.
   console.log('Verificación local. No se abrió MySQL ni se modificaron datos o permisos de usuarios.');
 } catch (error) {
