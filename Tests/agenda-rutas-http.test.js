@@ -64,8 +64,8 @@ test('Agenda: rutas reales, login, permisos y operaciones integradas sin MySQL D
       version: previo.version, motivo: 'Prueba individual de rutas', ...cambios } })).data;
   }
 
-  await t.test('Las 18 rutas rechazan IDs y Authorization sin cookie; CORS funciona antes de leer el cuerpo', async () => {
-    assert.equal(contract.length, 18);
+  await t.test('Las 25 rutas rechazan IDs y Authorization sin cookie; CORS funciona antes de leer el cuerpo', async () => {
+    assert.equal(contract.length, 25);
     for (const ruta of contract) {
       await enviar(ruta.path.replace(/:[^/]+/g, '1'), { jar: null, method: ruta.method,
         ...(['GET', 'HEAD'].includes(ruta.method) ? {} : { body: {} }),

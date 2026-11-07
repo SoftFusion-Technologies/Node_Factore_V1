@@ -1,3 +1,5 @@
+/* Benjamin Orellana - 05/11/2026 - Registrar la conexión personal de Google Calendar. */
+import AgendaGoogleModel from './Agenda/MD_TB_AgendaGoogleConexiones.js';
 /* Benjamin Orellana - 24/10/2026 - Configuración y registro de certificados de curso. */
 import CursoCertificadosModel from './Certificado/MD_TB_CursoCertificados.js';
 /* Benjamin Orellana - 24/10/2026 - Integración de compra y habilitación de Mi agenda. */
@@ -62,6 +64,7 @@ export {
 };
 
 export const modelos = {
+  agenda_google_conexiones: AgendaGoogleModel,
   curso_certificados: CursoCertificadosModel,
   agenda_compras: AgendaComprasModel,
   agenda_venta_configuracion: AgendaVentaConfiguracionModel,

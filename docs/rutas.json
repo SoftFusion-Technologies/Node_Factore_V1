@@ -1141,5 +1141,61 @@
     "perfil": "alumno",
     "controller": "Certificado/CTS_CampusCertificados.js",
     "handler": "OBRS_PdfMiCertificado_CTS"
+  },
+  {
+    "modulo": "agenda",
+    "method": "GET",
+    "path": "/api/agenda/google/dias/:fecha",
+    "controller": "Agenda/CTS_AgendaGoogle.js",
+    "handler": "OBRS_AgendaGoogle_CTS",
+    "perfil": "agenda"
+  },
+  {
+    "modulo": "agenda",
+    "method": "GET",
+    "path": "/api/agenda/google/callback",
+    "controller": "Agenda/CTS_AgendaGoogle.js",
+    "handler": "RETORNO_AgendaGoogle_CTS",
+    "perfil": "agenda"
+  },
+  {
+    "modulo": "agenda",
+    "method": "POST",
+    "path": "/api/agenda/google/conectar",
+    "controller": "Agenda/CTS_AgendaGoogle.js",
+    "handler": "CONECTAR_AgendaGoogle_CTS",
+    "perfil": "agenda"
+  },
+  {
+    "modulo": "agenda",
+    "method": "DELETE",
+    "path": "/api/agenda/google",
+    "controller": "Agenda/CTS_AgendaGoogle.js",
+    "handler": "DESCONECTAR_AgendaGoogle_CTS",
+    "perfil": "agenda"
+  },
+  {
+    "modulo": "agenda",
+    "method": "GET",
+    "path": "/api/agenda/google/mes/:mes",
+    "controller": "Agenda/CTS_AgendaGoogle.js",
+    "handler": "OBRS_MesAgendaGoogle_CTS",
+    "perfil": "agenda"
+  },
+  {
+    "modulo": "agenda",
+    "method": "POST",
+    "path": "/api/agenda/google/eventos",
+    "controller": "Agenda/CTS_AgendaGoogle.js",
+    "handler": "CR_AgendaGoogleEvento_CTS",
+    "perfil": "agenda"
+  },
+  {
+    "modulo": "agenda",
+    "method": "GET",
+    "path": "/api/agenda/google/eventos/:referencia",
+    "controller": "Agenda/CTS_AgendaGoogle.js",
+    "handler": "OBRS_AgendaGoogleEvento_CTS",
+    "perfil": "agenda"
   }
 ]

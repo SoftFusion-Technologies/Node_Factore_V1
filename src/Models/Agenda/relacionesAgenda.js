@@ -1,3 +1,4 @@
+import AgendaGoogleModel from './MD_TB_AgendaGoogleConexiones.js';
 import AgendaComprasModel from './MD_TB_AgendaCompras.js';
 import ComprasModel from '../Compra/MD_TB_Compras.js';
 /* Benjamin Orellana - 20/10/2026 - Relaciones de Mi agenda, sin sincronizar el esquema. */
@@ -14,6 +15,10 @@ let relacionesInicializadas = false;
 
 export function initAgendaRelaciones() {
   if (relacionesInicializadas) return;
+
+  // Benjamin Orellana - 05/11/2026 - Una conexión de Google por cuenta de Factor E.
+  UsuariosModel.hasOne(AgendaGoogleModel, { foreignKey: 'usuario_id', as: 'agenda_google', constraints: false });
+  AgendaGoogleModel.belongsTo(UsuariosModel, { foreignKey: 'usuario_id', as: 'usuario', constraints: false });
 
   // Los permisos de lectura/escritura se implementarán en servicios y rutas.
   // Estas asociaciones no sustituyen el filtro del usuario autenticado.

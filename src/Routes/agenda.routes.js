@@ -1,3 +1,5 @@
+/* Benjamin Orellana - 05/11/2026 - Google Calendar de solo lectura para el usuario autenticado. */
+import { CONECTAR_AgendaGoogle_CTS, RETORNO_AgendaGoogle_CTS, OBRS_AgendaGoogle_CTS, OBRS_MesAgendaGoogle_CTS, DESCONECTAR_AgendaGoogle_CTS, CR_AgendaGoogleEvento_CTS, OBRS_AgendaGoogleEvento_CTS } from '../Controllers/Agenda/CTS_AgendaGoogle.js';
 /* Benjamin Orellana - 21/10/2026 - Rutas de Mi agenda y permisos administrativos individuales. */
 import express from 'express';
 import { autenticar, exigirPasswordActualizada, soloAdmin } from '../Security/auth.js';
@@ -34,5 +36,14 @@ router.delete('/api/agenda/tiempos/:id', autenticar, exigirPasswordActualizada, 
 
 router.get('/api/admin/agenda/accesos/:usuario_id', autenticar, exigirPasswordActualizada, soloAdmin, OBRS_AgendaAccesoUsuario_CTS);
 router.patch('/api/admin/agenda/accesos/:usuario_id', autenticar, exigirPasswordActualizada, soloAdmin, jsonAgenda, UR_AgendaAccesoUsuario_CTS);
+
+router.get('/api/agenda/google/mes/:mes', autenticar, exigirPasswordActualizada, OBRS_MesAgendaGoogle_CTS);
+router.get('/api/agenda/google/dias/:fecha', autenticar, exigirPasswordActualizada, OBRS_AgendaGoogle_CTS);
+router.get('/api/agenda/google/callback', autenticar, exigirPasswordActualizada, RETORNO_AgendaGoogle_CTS);
+router.post('/api/agenda/google/conectar', autenticar, exigirPasswordActualizada, jsonAgenda, CONECTAR_AgendaGoogle_CTS);
+router.delete('/api/agenda/google', autenticar, exigirPasswordActualizada, jsonAgenda, DESCONECTAR_AgendaGoogle_CTS);
+
+router.post('/api/agenda/google/eventos', autenticar, exigirPasswordActualizada, jsonAgenda, CR_AgendaGoogleEvento_CTS);
+router.get('/api/agenda/google/eventos/:referencia', autenticar, exigirPasswordActualizada, OBRS_AgendaGoogleEvento_CTS);
 
 export default router;

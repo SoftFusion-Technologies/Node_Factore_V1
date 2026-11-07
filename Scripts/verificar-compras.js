@@ -10,7 +10,7 @@ import { initRelaciones } from '../src/Models/relaciones.js';
 import * as compras from '../src/Services/Compra/compra.service.js';
 try {
   initRelaciones();
-  assert.equal(Object.keys(modelos).length,30);
+  assert.equal(Object.keys(modelos).length,31);
   for(const name of ['crearCompra','obtenerCompra','cancelarCompra'])assert.equal(typeof compras[name],'function');
   assert.ok(modelos.compras.associations.items);
   assert.ok(modelos.compra_items.associations.curso);

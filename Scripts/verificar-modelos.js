@@ -24,7 +24,7 @@ function normalizarTipo(value) {
 }
 
 function verificarLocales() {
-  assert.equal(Object.keys(modelos).length, 30, 'Se esperan 30 modelos.');
+  assert.equal(Object.keys(modelos).length, 31, 'Se esperan 31 modelos.');
   const camposAntes = Object.fromEntries(Object.entries(modelos).map(([table, model]) =>
     [table, Object.keys(model.rawAttributes)]));
   initRelaciones();
@@ -50,13 +50,14 @@ function verificarLocales() {
       }
     }
   }
-  assert.equal(campos, 331, 'La estructura instalada contiene 331 columnas.');
-  assert.equal(relaciones, 108, 'Se esperan 108 asociaciones, incluidas las inversas y comerciales.');
+  assert.equal(campos, 338, 'La estructura instalada contiene 338 columnas.');
+  assert.equal(relaciones, 110, 'Se esperan 110 asociaciones, incluidas las inversas y comerciales.');
   for (const [table, secret] of [['compras','token_hash'],['usuarios','password_hash'],['usuarios_sesiones','token_hash'],['usuarios_tokens','token_hash']]) {
     assert.ok(modelos[table].options.defaultScope.attributes.exclude.includes(secret));
     assert.deepEqual(modelos[table].scope('conHash')._scope.attributes.exclude, []);
   }
-  return { modelos: 30, campos, asociaciones: relaciones };
+  assert.deepEqual(modelos.agenda_google_conexiones.options.defaultScope.attributes.exclude, ['refresh_cifrado', 'intento_cifrado']);
+  return { modelos: 31, campos, asociaciones: relaciones };
 }
 
 async function verificarMySQL() {
@@ -122,16 +123,16 @@ async function verificarMySQL() {
     }
   }
   const serializar = key => JSON.stringify([key.table,key.fields,key.target,key.targetFields,key.onDelete]);
-  assert.equal(expectedFK.length, 47);
-  assert.deepEqual([...grouped.values()].map(serializar).sort(), expectedFK.map(serializar).sort(), 'Las 47 claves foráneas no coinciden.');
+  assert.equal(expectedFK.length, 48);
+  assert.deepEqual([...grouped.values()].map(serializar).sort(), expectedFK.map(serializar).sort(), 'Las 48 claves foráneas no coinciden.');
   const checks = await select(`SELECT TABLE_NAME,CONSTRAINT_NAME,ENFORCED FROM information_schema.TABLE_CONSTRAINTS
     WHERE CONSTRAINT_SCHEMA=:schema AND CONSTRAINT_TYPE='CHECK'`, schema);
   const ownChecks = checks.filter(c => modelos[c.TABLE_NAME]);
   assert.equal(ownChecks.length, 73, 'Se esperan 73 CHECK en las tablas de Factor E.');
   assert.ok(ownChecks.every(c => c.ENFORCED === 'YES'), 'Hay CHECK no efectivos.');
   const unique = statistics.filter(row => modelos[row.TABLE_NAME] && row.INDEX_NAME !== 'PRIMARY' && Number(row.NON_UNIQUE) === 0);
-  assert.equal(new Set(unique.map(row => `${row.TABLE_NAME}.${row.INDEX_NAME}`)).size, 26, 'Se esperan 26 índices únicos.');
-  return {...motor, vistas:4, claves_foraneas:47, claves_compuestas:8, checks:73, indices_unicos:26};
+  assert.equal(new Set(unique.map(row => `${row.TABLE_NAME}.${row.INDEX_NAME}`)).size, 27, 'Se esperan 27 índices únicos.');
+  return {...motor, vistas:4, claves_foraneas:48, claves_compuestas:8, checks:73, indices_unicos:27};
 }
 
 try {

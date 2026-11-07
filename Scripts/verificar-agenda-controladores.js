@@ -28,9 +28,9 @@ try {
     assert.deepEqual(Object.keys(modulo).sort(), [...nombres].sort());
     for (const nombre of nombres) assert.equal(typeof modulo[nombre], 'function');
   }
-  assert.equal(Object.keys(modelos).length, 30);
+  assert.equal(Object.keys(modelos).length, 31);
   console.log('Controladores Agenda OK:', JSON.stringify({ controladores: 7,
-    funciones: contratos.reduce((n, [, nombres]) => n + nombres.length, 0), servicios: 7, modelos: 30 }));
+    funciones: contratos.reduce((n, [, nombres]) => n + nombres.length, 0), servicios: 7, modelos: 31 }));
   // Benjamin Orellana - 21/10/2026 - Mensaje vigente al conectar las rutas de Agenda.
   console.log('Verificación local. No se abrió MySQL ni se modificaron datos o permisos de usuarios.');
 } catch (error) {

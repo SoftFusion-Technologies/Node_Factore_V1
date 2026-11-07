@@ -12,7 +12,7 @@ import { verificarFirmaWebhook } from '../src/Services/Pago/firmaWebhook.service
 import { consultarPagoMP } from '../src/Services/Pago/consultaPago.service.js';
 try {
   initRelaciones();
-  assert.equal(Object.keys(modelos).length,30);
+  assert.equal(Object.keys(modelos).length,31);
   assert.ok(modelos.compras.associations.pagos);
   assert.ok(modelos.compra_pagos.associations.compra);
   assert.equal(modelos.compra_pagos.options.indexes.find(row=>row.name==='uq_compra_pagos_mp').unique,true);

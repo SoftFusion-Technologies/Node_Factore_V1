@@ -325,3 +325,15 @@ Benjamin Orellana - Estado y diploma del alumno autenticado. Las cuatro rutas ex
 | GET | `/api/campus/cursos/:curso_id/certificado/pdf` | `OBRS_PdfMiCertificado_CTS` |
 
 GET informa `DESHABILITADO`, `PENDIENTE`, `LISTO`, `EMITIDO` o el motivo de restricción. POST retorna 201 en la primera emisión y 200 al repetirla; no acepta nombre, fecha, usuario ni carga horaria. PDF usa `application/pdf`, `Cache-Control: private, no-store` y descarga con nombre fijo. Detalle de reglas y validación en CERTIFICADOS_ETAPA2.md.
+
+## Google Calendar en Mi agenda · 07/11/2026
+
+GET `/api/agenda/google/mes/:mes` consulta el calendario principal propio para un mes YYYY-MM. Requiere sesión y Mi agenda vigente; conserva el mismo aislamiento que la consulta diaria. No escribe eventos ni crea días en Factor E.
+
+## Creación de eventos de Google · 07/11/2026
+
+POST `/api/agenda/google/eventos` crea un evento propio con referencia estable,
+conexión vigente y consentimiento adicional. GET
+`/api/agenda/google/eventos/:referencia?conexion_revision=...` comprueba el
+mismo envío. Las dos rutas requieren sesión y Mi agenda habilitada; el POST
+requiere origen y CSRF. No hay cambios de esquema.

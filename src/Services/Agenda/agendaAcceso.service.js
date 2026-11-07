@@ -41,37 +41,41 @@ function exigirPermiso(ctx, ahora) {
   exigir(ctx.acceso && estadoTemporal(ctx.acceso, ahora) === 'ACTIVO', 403, 'AGENDA_NO_HABILITADA',
     'Tu acceso a Mi agenda no está habilitado o dejó de estar vigente.');
 }
-export function controladorAgenda(metodo, operation, { admin = false, permiso = true, despues } = {}) {
+/* Benjamin Orellana - 05/11/2026 - Revalidar Agenda antes y después de consultar proveedores sin retener bloqueos. */
+export async function conAgenda(req, operation, { admin = false, permiso = true } = {}) {
+  const sesion = await sesionActual(req);
+  if (req.method !== 'GET') {
+    exigir(req.headers?.origin !== undefined, 403, 'ORIGEN_REQUERIDO', 'La escritura requiere un origen permitido.');
+    exigirJson(req);
+  }
+  return db.transaction({ isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED }, async transaction => {
+    const { user, cliente } = await bloquearUsuario(sesion.usuario.id, transaction);
+    exigirCuenta(user, cliente);
+    if (admin) exigir(user.rol === 'ADMIN', 403, 'NO_AUTORIZADO', 'Esta operación requiere administrador.');
+    const ctx = { req, sesion, usuario: user, transaction, ahora: await ahoraDB(transaction) };
+    await revalidarSesion(ctx);
+    if (!admin) {
+      ctx.acceso = await m.agenda_accesos.findOne({ where: { usuario_id: user.id }, transaction, lock: transaction.LOCK.UPDATE });
+      if (permiso) exigirPermiso(ctx, ctx.ahora);
+    }
+    const salida = await operation(req, ctx);
+    await revalidarSesion(ctx);
+    // Una sesión o ventana vencida durante el trabajo no confirma cambios.
+    if (!admin && permiso) {
+      ctx.acceso = await m.agenda_accesos.findOne({ where: { usuario_id: user.id }, transaction, lock: transaction.LOCK.UPDATE });
+      exigirPermiso(ctx, await ahoraDB(transaction));
+    }
+    return salida;
+  });
+}
+export function controladorAgenda(metodo, operation, { admin = false, permiso = true, despues, redirigir = false } = {}) {
   return async (req, res) => {
     res.setHeader('Cache-Control', 'private, no-store');
     try {
       exigir(req.method === metodo, 405, 'METODO_INVALIDO', `Usar ${metodo} para esta operación.`);
-      // El controlador se protege también si se prueba directamente, sin middleware.
-      const sesion = await sesionActual(req);
-      if (metodo !== 'GET') {
-        exigir(req.headers?.origin !== undefined, 403, 'ORIGEN_REQUERIDO', 'La escritura requiere un origen permitido.');
-        exigirJson(req);
-      }
-      const result = await db.transaction({ isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED }, async transaction => {
-        const { user, cliente } = await bloquearUsuario(sesion.usuario.id, transaction);
-        exigirCuenta(user, cliente);
-        if (admin) exigir(user.rol === 'ADMIN', 403, 'NO_AUTORIZADO', 'Esta operación requiere administrador.');
-        const ctx = { req, sesion, usuario: user, transaction, ahora: await ahoraDB(transaction) };
-        await revalidarSesion(ctx);
-        if (!admin) {
-          ctx.acceso = await m.agenda_accesos.findOne({ where: { usuario_id: user.id }, transaction, lock: transaction.LOCK.UPDATE });
-          if (permiso) exigirPermiso(ctx, ctx.ahora);
-        }
-        const salida = await operation(req, ctx);
-        await revalidarSesion(ctx);
-        // Una sesión o ventana vencida durante el trabajo no confirma cambios.
-        if (!admin && permiso) {
-          ctx.acceso = await m.agenda_accesos.findOne({ where: { usuario_id: user.id }, transaction, lock: transaction.LOCK.UPDATE });
-          exigirPermiso(ctx, await ahoraDB(transaction));
-        }
-        return salida;
-      });
+      const result = await conAgenda(req, operation, { admin, permiso });
       const salida = despues ? await despues(result, req) : result;
+      if (redirigir) return res.redirect(303, salida.destino);
       const { status = 200, ...body } = salida;
       return res.status(status).json(serializar(body));
     } catch (error) {

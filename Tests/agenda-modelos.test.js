@@ -29,7 +29,8 @@ test('Agenda: integridad y propiedad de los modelos, sin conexión a MySQL DESA'
       .map(match => match[1].replace(/\s+/g, ' ').trim().replace(/,$/, ''));
     assert.equal(restricciones(mysql).length, 31);
     assert.deepEqual(restricciones(sqlite), restricciones(mysql));
-    for (const [tabla, modelo] of Object.entries(m).filter(([nombre]) => nombre.startsWith('agenda_') && !['agenda_venta_configuracion', 'agenda_compras'].includes(nombre))) {
+    const otrasEtapas = ['agenda_venta_configuracion', 'agenda_compras', 'agenda_google_conexiones'];
+    for (const [tabla, modelo] of Object.entries(m).filter(([nombre]) => nombre.startsWith('agenda_') && !otrasEtapas.includes(nombre))) {
       const columnas = await select('PRAGMA table_info(' + tabla + ')');
       assert.deepEqual(columnas.map(c => c.name), Object.keys(modelo.rawAttributes));
     }
