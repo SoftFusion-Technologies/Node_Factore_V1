@@ -72,7 +72,7 @@ try {
       if (typeof handler === 'function') { functions++; assert.ok(seen.has(handler), `${file}: ${name} no tiene ruta.`); }
     }
   }
-  assert.equal(functions, 140);
+  assert.equal(functions, 141);
   const app = crearApp();
   assert.equal(app.get('trust proxy'), process.env.TRUST_PROXY === 'loopback' ? 'loopback' : false);
   assert.equal(app.get('query parser'), 'simple');

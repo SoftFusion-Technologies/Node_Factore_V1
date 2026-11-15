@@ -784,6 +784,14 @@
     "perfil": "catalogo"
   },
   {
+    "modulo": "catalogo",
+    "method": "GET",
+    "path": "/api/catalogo/cursos/:slug/portada",
+    "controller": "Catalogo/CTS_CatalogoCursos.js",
+    "handler": "OBRS_PortadaCatalogoCurso_CTS",
+    "perfil": "catalogo"
+  },
+  {
     "modulo": "checkout",
     "method": "POST",
     "path": "/api/checkout/compras",
