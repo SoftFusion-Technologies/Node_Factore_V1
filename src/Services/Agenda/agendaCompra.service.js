@@ -7,6 +7,7 @@ import { camposPermitidos, exigir } from '../../utils/validacion.utils.js';
 import { hashToken } from '../../utils/password.utils.js';
 import { sesionActual } from '../Usuario/auth.service.js';
 import { bloquearUsuario } from '../Usuario/usuarioEstado.service.js';
+import { mercadoPagoDisponible } from '../Pago/mercadoPago.service.js';
 import { ahoraCompra, identidadCompra } from '../Compra/compra.service.js';
 import { exigirPago, vencimientoCompra } from '../Compra/entregaCompra.service.js';
 import { fechaGuardada, estadoTemporal } from '../Acceso/permisoAcceso.service.js';
@@ -49,7 +50,7 @@ export async function ofertaAgenda(req, ctx) {
   const pendiente = await m.compras.findOne({ where: { usuario_id: ctx.usuario.id, estado: 'PENDIENTE' },
     include: [{ model: m.agenda_compras, as: 'agenda_compras', required: true }],
     order: [['id', 'DESC']], transaction: ctx.transaction });
-  return { disponible: row?.venta_habilitada === 1 && Number(row.precio) > 0,
+  return { disponible: row?.venta_habilitada === 1 && Number(row.precio) > 0 && mercadoPagoDisponible(),
     precio: row?.precio ?? null, moneda: 'ARS', acceso_duracion_cantidad: row?.acceso_duracion_cantidad ?? null,
     acceso_duracion_unidad: row?.acceso_duracion_unidad ?? null,
     acceso: vistaAcceso(ctx.acceso, ctx.ahora),
@@ -70,6 +71,7 @@ export async function crearCompraAgenda(req, ctx) {
   if (anterior) return resumenCompraAgenda(req, ctx, body.referencia);
   permisoComprable(ctx.acceso);
   const config = await configuracion(ctx);
+  exigir(mercadoPagoDisponible(), 503, 'MP_NO_CONFIGURADO', 'El pago online no está disponible.');
   // Bloquear la cuenta serializa dobles clics y referencias distintas de dos pestañas.
   const pendientes = await m.compras.findAll({ where: { usuario_id: ctx.usuario.id, estado: 'PENDIENTE',
     vence_en: { [Op.gt]: ctx.ahora } }, include: [{ model: m.agenda_compras, as: 'agenda_compras', required: true }],

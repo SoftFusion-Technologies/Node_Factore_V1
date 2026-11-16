@@ -41,6 +41,7 @@ test('Compra de Agenda: pago verificado y entrega automática sin asignación ma
       assert.equal(target.pathname, '/checkout/preferences'); posts++;
       const body = JSON.parse(options.body), pref = { ...body, id: 'pref-' + (++sequence), collector_id: 123456 };
       pref.sandbox_init_point = 'https://sandbox.mercadopago.com.ar/checkout/v1/redirect?pref_id=' + pref.id;
+      pref.init_point = 'https://www.mercadopago.com/mla/checkout/start?pref_id=' + pref.id;
       preferences.set(pref.external_reference, pref);
       if (perderRespuesta) throw new Error('Respuesta perdida después de crear');
       return json(pref);
@@ -201,6 +202,39 @@ test('Compra de Agenda: pago verificado y entrega automática sin asignación ma
     const row = await m.compras.findOne({ where: { referencia: compra.referencia } });
     const detail = await request('/admin/compras/' + row.id, { cookie: jefe });
     assert.equal(detail.data.estado_entrega, 'ENTREGADA'); assert.equal(detail.data.items[0].tipo, 'AGENDA');
+  });
+  await t.test('Producción: $14.900 ARS, enlace real, sin habilitación por pago de prueba, y entrega por webhook real simulado', async () => {
+    const env = { NODE_ENV: 'production', COOKIE_SECURE: 'true', MP_MODO: 'PRODUCCION', MP_ACCESS_TOKEN: 'APP_USR-simulado',
+      MP_FRONTEND_URL: 'https://factore.com.ar', MP_NOTIFICATION_URL: 'https://api.factore.com.ar/api/mercadopago/webhook' };
+    const previous = Object.fromEntries(Object.keys(env).map(key => [key, process.env[key]]));
+    try {
+      Object.assign(process.env, env);
+      const sol = await alumno('Sol'), session = await login(sol);
+      await m.agenda_venta_configuracion.update({ precio: '14900.00', venta_habilitada: 1 }, { where: { id: '1' } });
+      const oferta = await request('/agenda/venta', { cookie: session });
+      assert.equal(oferta.data.disponible, true);
+      assert.equal(oferta.data.precio, '14900.00');
+      const compra = await crear(session);
+      assert.equal(compra.total, '14900.00');
+      const pago = await pagar(compra.referencia, session);
+      const pref = preferences.get(compra.referencia);
+      assert.equal(pago.data.url, pref.init_point);
+      assert.equal(pref.items[0].unit_price, 14900);
+      assert.equal(pref.items[0].currency_id, 'ARS');
+      assert.equal(pref.back_urls.success, 'https://factore.com.ar/mi-agenda/compras/' + compra.referencia);
+      assert.equal((await pagar(compra.referencia, session)).data.url, pref.init_point);
+      await notificar(compra.referencia, { live_mode: false }, 503);
+      assert.equal(await m.agenda_accesos.count({ where: { usuario_id: sol.id } }), 0);
+      const confirmado = await notificar(compra.referencia, { live_mode: true });
+      const row = await m.compra_pagos.findOne({ where: { mp_pago_id: String(confirmado.payment.id) } });
+      assert.equal(row.modo_prueba, 0);
+      assert.equal(row.validacion, 'VALIDADO');
+      await confirmado.notify();
+      assert.equal((await get(compra.referencia, session)).data.entregada, true);
+      process.env.MP_HABILITADO = 'false';
+      try { assert.equal((await request('/agenda/venta', { cookie: session })).data.disponible, false); }
+      finally { process.env.MP_HABILITADO = 'true'; }
+    } finally { Object.assign(process.env, previous); }
   });
   await t.test('Migración y fixture conservan restricciones; ningún CHECK usa la columna autoincremental', async () => {
     const sql = await readFile(new URL('../docs/sql/AGENDA_ETAPA6.sql', import.meta.url), 'utf8');

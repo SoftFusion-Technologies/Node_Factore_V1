@@ -6,7 +6,7 @@ export function configuracionConfirmacionMP() {
   const config = configuracionMP();
   let collector;
   try { collector = id(process.env.MP_COLLECTOR_ID); }
-  catch { throw new ErrorHttp(503,'MP_COLLECTOR_NO_CONFIGURADO','Configurar el vendedor de prueba esperado.'); }
+  catch { throw new ErrorHttp(503,'MP_COLLECTOR_NO_CONFIGURADO','Configurar el vendedor esperado.'); }
   return {...config,collector};
 }
 export function decimalMP(value) {
@@ -33,11 +33,13 @@ export async function consultarPagoMP(pagoId,config,fetchImpl=(...args)=>fetch(.
   try {
     const payment=await get('/v1/payments/'+id(pagoId));
     exigir(id(payment.id)===pagoId && typeof payment.live_mode==='boolean' && id(payment.collector_id)===config.collector,
-      503,'MP_PAGO_NO_VERIFICADO','El pago no pertenece al vendedor y entorno de prueba configurados.');
+      503,'MP_PAGO_NO_VERIFICADO','El pago no pertenece al vendedor configurado.');
     // Benjamin Orellana - 18/10/2026 - En DESA, verificar el vendedor test_user cuando MP devuelve live_mode=true.
     // La etiqueta debe proceder del perfil del dueño del token, consultado por HTTPS;
     // no se acepta una marca del webhook, del comprador ni de una variable local.
-    if(payment.live_mode===true) {
+    if (config.modo === 'PRODUCCION') {
+      exigir(payment.live_mode === true,503,'MP_ENTORNO_NO_VERIFICADO','El pago no pertenece al entorno de producción.');
+    } else if(payment.live_mode===true) {
       exigir(['development','test'].includes(process.env.NODE_ENV) && process.env.MP_MODO==='PRUEBA' && process.env.MP_HABILITADO==='true',
         503,'MP_ENTORNO_NO_VERIFICADO','Este pago requiere verificar el vendedor de prueba en DESA.');
       const response=await fetchImpl('https://api.mercadolibre.com/users/me',{method:'GET',redirect:'error',signal:abort.signal,
@@ -58,7 +60,7 @@ export async function consultarPagoMP(pagoId,config,fetchImpl=(...args)=>fetch(.
       (payment.status_detail===null || typeof payment.status_detail==='string' && /^[A-Za-z0-9_-]{1,100}$/.test(payment.status_detail)) &&
       typeof payment.currency_id==='string' && /^[A-Z]{3,10}$/.test(payment.currency_id),502,'MP_RESPUESTA_INVALIDA','Estado de pago no verificable.');
     // Devuelve solo datos operativos. Nunca guardar el JSON con payer/card.
-    return {id:pagoId,referencia:payment.external_reference,preferenciaId:order.preference_id,
+    return {id:pagoId,modoPrueba:config.modo === 'PRODUCCION' ? 0 : 1,referencia:payment.external_reference,preferenciaId:order.preference_id,
       estado:payment.status,detalle_estado:payment.status_detail,importe:decimalMP(payment.transaction_amount),
       importe_reintegrado:decimalMP(payment.transaction_amount_refunded),moneda:payment.currency_id,
       aprobado_en:fechaMP(payment.date_approved,true),mp_actualizado_en:fechaMP(payment.date_last_updated)};

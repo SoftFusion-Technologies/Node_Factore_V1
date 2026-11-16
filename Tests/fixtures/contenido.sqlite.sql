@@ -440,7 +440,7 @@ CREATE TABLE compra_pagos (
   importe NUMERIC NOT NULL CHECK(importe>=0),
   importe_reintegrado NUMERIC NOT NULL DEFAULT '0.00' CHECK(importe_reintegrado>=0),
   moneda TEXT NOT NULL,
-  modo_prueba INTEGER NOT NULL DEFAULT 1 CHECK(modo_prueba=1),
+  modo_prueba INTEGER NOT NULL DEFAULT 1 CHECK(modo_prueba IN (0,1)),
   mp_actualizado_en TEXT NOT NULL,
   aprobado_en TEXT NULL,
   verificado_en TEXT NOT NULL,

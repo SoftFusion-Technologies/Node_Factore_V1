@@ -1,12 +1,13 @@
 /* Benjamin Orellana - 13/10/2026 - Confirmación transaccional; sin cuentas ni accesos. */
 import db from '../../DataBase/db.js';
 import ComprasModel from '../../Models/Compra/MD_TB_Compras.js';
+import AgendaComprasModel from '../../Models/Agenda/MD_TB_AgendaCompras.js';
 import PagosModel from '../../Models/Compra/MD_TB_CompraPagos.js';
 import { itemsPagoCompra } from './itemsPago.service.js';
 import { entregarAgendaCompra } from '../Agenda/agendaCompra.service.js';
 import AuditoriaModel from '../../Models/Sistema/MD_TB_AuditoriaEventos.js';
 import { ahoraCompra } from './compra.service.js';
-import { fecha } from '../Pago/mercadoPago.service.js';
+import { fecha, enlaceCheckout } from '../Pago/mercadoPago.service.js';
 import { configuracionConfirmacionMP, consultarPagoMP } from '../Pago/consultaPago.service.js';
 import { exigir } from '../../utils/validacion.utils.js';
 
@@ -26,8 +27,14 @@ export async function confirmarPagoMP(pagoId,{referenciaEsperada}={}) {
     if(!compra)return {ignorada:true};
     exigir(compra.mp_preferencia_id && compra.mp_preferencia_id===payment.preferenciaId,
       503,'MP_PREFERENCIA_NO_VERIFICADA','El pago requiere resolver la vinculación de su preferencia.');
+    if (payment.modoPrueba === 0) {
+      const agenda = await AgendaComprasModel.findOne({where:{compra_id:compra.id},transaction});
+      exigir(agenda && String(agenda.usuario_id) === String(compra.usuario_id),503,'MP_PAGO_NO_VERIFICADO','La compra no corresponde a Agenda.');
+      enlaceCheckout(compra.mp_checkout_url,compra.mp_preferencia_id,'PRODUCCION');
+    }
     const previous=await PagosModel.findOne({where:{mp_pago_id:pagoId},transaction,lock:transaction.LOCK.UPDATE});
     exigir(!previous || String(previous.compra_id)===String(compra.id),503,'MP_PAGO_NO_VERIFICADO','El pago ya pertenece a otra compra.');
+    exigir(!previous || previous.modo_prueba === payment.modoPrueba,503,'MP_ENTORNO_NO_VERIFICADO','El pago ya fue registrado en otro entorno.');
     const now=await ahoraCompra(transaction);
     exigir(payment.mp_actualizado_en.getTime()<=now.getTime()+300000,503,'MP_FECHA_NO_VERIFICADA','La actualización del pago tiene una fecha no verificable.');
     if(previous && fecha(previous.mp_actualizado_en)>payment.mp_actualizado_en)return {ignorada:true};
@@ -57,7 +64,7 @@ export async function confirmarPagoMP(pagoId,{referenciaEsperada}={}) {
     if(!reason && previous?.validacion==='REVISION')reason=previous.motivo_revision;
     const values={compra_id:compra.id,mp_pago_id:pagoId,estado:payment.estado,detalle_estado:payment.detalle_estado,
       validacion:reason?'REVISION':'VALIDADO',motivo_revision:reason,importe:payment.importe,
-      importe_reintegrado:payment.importe_reintegrado,moneda:payment.moneda,modo_prueba:1,
+      importe_reintegrado:payment.importe_reintegrado,moneda:payment.moneda,modo_prueba:payment.modoPrueba,
       mp_actualizado_en:payment.mp_actualizado_en,aprobado_en:payment.aprobado_en,verificado_en:now};
     if(previous)await previous.update(values,{transaction});
     else await PagosModel.create(values,{transaction});

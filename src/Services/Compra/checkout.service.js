@@ -9,7 +9,7 @@ import AgendaAccesosModel from '../../Models/Agenda/MD_TB_AgendaAccesos.js';
 import CursosModel from '../../Models/Curso/MD_TB_Cursos.js';
 import AuditoriaModel from '../../Models/Sistema/MD_TB_AuditoriaEventos.js';
 import { identidadCompra,autorizarCompra,ahoraCompra } from './compra.service.js';
-import { configuracionMP,cuerpoPreferencia,solicitarPreferencia,fecha,enlaceSandbox } from '../Pago/mercadoPago.service.js';
+import { configuracionMP,cuerpoPreferencia,solicitarPreferencia,fecha,enlaceCheckout } from '../Pago/mercadoPago.service.js';
 import { ErrorHttp,exigir } from '../../utils/validacion.utils.js';
 
 export async function crearCheckout(referencia,token) {
@@ -39,7 +39,8 @@ async function checkout(referencia, tokenHash, req) {
     } else autorizarCompra(row,tokenHash);
     exigir(row.estado === 'PENDIENTE' && await ahoraCompra(transaction) < fecha(row.vence_en),409,'COMPRA_NO_PAGABLE','La compra venció o ya no admite iniciar un pago.');
     const config = configuracionMP();
-    if(row.mp_preferencia_estado === 'DISPONIBLE')return {id:row.mp_preferencia_id,url:enlaceSandbox(row.mp_checkout_url,row.mp_preferencia_id),vence_en:fecha(row.vence_en).toISOString(),reutilizada:true};
+    exigir(config.modo !== 'PRODUCCION' || req,503,'MP_NO_CONFIGURADO','La venta de cursos no está habilitada en este entorno.');
+    if(row.mp_preferencia_estado === 'DISPONIBLE')return {id:row.mp_preferencia_id,url:enlaceCheckout(row.mp_checkout_url,row.mp_preferencia_id,config.modo),vence_en:fecha(row.vence_en).toISOString(),reutilizada:true};
     exigir(row.mp_preferencia_estado === 'SIN_CREAR',409,'MP_CONFIRMACION_PENDIENTE','El intento de pago ya fue enviado y requiere confirmar su resultado antes de repetirlo.');
     const items = await itemsPagoCompra(row, transaction);
     exigir(items.length > 0,409,'COMPRA_INVALIDA','La compra no tiene cursos.');

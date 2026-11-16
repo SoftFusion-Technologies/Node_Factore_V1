@@ -3,12 +3,13 @@
 import db from '../../DataBase/db.js';
 import ComprasModel from '../../Models/Compra/MD_TB_Compras.js';
 import { itemsPagoCompra } from './itemsPago.service.js';
+import AgendaComprasModel from '../../Models/Agenda/MD_TB_AgendaCompras.js';
 import PagosModel from '../../Models/Compra/MD_TB_CompraPagos.js';
 import AuditoriaModel from '../../Models/Sistema/MD_TB_AuditoriaEventos.js';
 import { ahoraCompra } from './compra.service.js';
 import { confirmarPagoMP } from './confirmacionPago.service.js';
 import { configuracionConfirmacionMP,decimalMP,fechaMP } from '../Pago/consultaPago.service.js';
-import { fecha,enlaceSandbox } from '../Pago/mercadoPago.service.js';
+import { fecha,enlacePreferencia } from '../Pago/mercadoPago.service.js';
 import { buscarPreferenciaCompra,obtenerPreferenciaMP,buscarPagosCompra } from '../Pago/busquedaMP.service.js';
 import { exigir,id,ErrorHttp } from '../../utils/validacion.utils.js';
 
@@ -39,7 +40,7 @@ function verificarPreferencia(pref,compra,items,config) {
     seen.add(courseId);cents+=BigInt(item.precio_unitario.replace('.',''));
   }
   exigir(cents===BigInt(compra.total.replace('.','')),409,'COMPRA_IMPORTE_INVALIDO','La compra requiere revisar sus importes.');
-  return enlaceSandbox(pref.sandbox_init_point,pref.id);
+  return enlacePreferencia(pref,config);
 }
 async function recuperarPreferencia(compra,config) {
   if(compra.mp_preferencia_id)return false;
@@ -73,6 +74,10 @@ export async function reconciliarCompra(referencia) {
     exigir(compra,404,'COMPRA_NO_ENCONTRADA','Compra no encontrada.');
     if(compra.mp_preferencia_estado==='SIN_CREAR' && !compra.mp_preferencia_id)return resumen(compra,false,0,[],true);
     const config=configuracionConfirmacionMP();
+    if (config.modo === 'PRODUCCION') {
+      const agenda = await AgendaComprasModel.findOne({where:{compra_id:compra.id}});
+      exigir(agenda && String(agenda.usuario_id) === String(compra.usuario_id),503,'MP_NO_CONFIGURADO','Solo se concilian compras de Agenda en producción.');
+    }
     const recovered=await recuperarPreferencia(compra,config);
     await compra.reload();
     // Primero completar la búsqueda. No marcar PAGADA a partir del resumen de Search.

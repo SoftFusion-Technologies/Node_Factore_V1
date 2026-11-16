@@ -40,3 +40,13 @@ test('Rechazar producción, dominios parecidos, credenciales y otra preferencia'
     assert.throws(() => enlaceSandbox(url, preferencia), { code: 'MP_RESPUESTA_INVALIDA' });
   }
 });
+
+
+test('Producción rechaza la preferencia de otro vendedor y no cae a sandbox', async () => {
+  const config = { modo: 'PRODUCCION', collector: '123456', token: 'APP_USR-simulado' };
+  const respuesta = datos => async () => new Response(JSON.stringify({ id: preferencia, sandbox_init_point: argentino, ...datos }),
+    { headers: { 'content-type': 'application/json' } });
+  const init_point = 'https://www.mercadopago.com/mla/checkout/start?pref_id=' + preferencia;
+  await assert.rejects(solicitarPreferencia({}, config, respuesta({ collector_id: 999, init_point })), { code: 'MP_VENDEDOR_INCORRECTO' });
+  await assert.rejects(solicitarPreferencia({}, config, respuesta({ collector_id: 123456 })), { code: 'MP_RESPUESTA_INVALIDA' });
+});
